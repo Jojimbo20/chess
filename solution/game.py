@@ -1,14 +1,24 @@
 import chess_resources as chess
 
-x = chess.Knight("Knight","White", 7, 1)
+Knight = chess.Knight("Knight","White", 7, 1)
 y = chess.Player
 z = chess.Board
-x.calculate_moves()
-x.print_moves()
-x.change_pos(3,2)
-x.calculate_moves()
-x.print_moves()
+Knight.calculate_moves()
+Knight.print_moves()
+Knight.change_pos(1,3)
 
+Knight.calculate_moves()
+Knight.print_moves()
 
-y.a()
-z.a()
+"""
+    Added all pieces 
+    Added their move matrices 
+    Added the Calculate Postion function
+    Added a print_moves() function to show moves
+
+    NEXT:
+        Add a matrix of pieces to the Board class
+        Add a List of pieces to the player classs
+    
+"""
+

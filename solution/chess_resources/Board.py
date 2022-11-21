@@ -4,7 +4,14 @@ from .Pieces import Pawn
 
 class Board(object):
     #A matrix of all of the current Pieces.
-    board = [0][0]
+    board = [[],
+             [],
+             [],
+             [],
+             [],
+             [],
+             [],
+             []]
     def a():
         print("B Well done.")
     
