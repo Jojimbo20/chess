@@ -1,5 +1,4 @@
-from .Pieces import Piece
-from .Pieces import Pawn
+import chess_resources as chess
 
 
 class Board(object):

@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\solution",
-    "\\solution\\chess_resources"
+    "\\solution\\chess_resources",
+    "\\solution\\chess_resources\\__pycache__"
   ],
-  "SelectedNode": "\\solution\\game.py",
+  "SelectedNode": "\\solution\\chess_resources\\Pieces.py",
   "PreviewInSolutionExplorer": false
 }

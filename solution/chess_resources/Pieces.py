@@ -1,10 +1,8 @@
 class Piece(object):
+    name = "test"
     is_alive = True
-    pos_a = 0
-    pos_b = 0
 
-    def __init__(self, _name, _colour, _pos_a, _pos_b):
-        self.name = _name
+    def __init__(self, _colour, _pos_a, _pos_b):
         self.colour = _colour
         self.pos_a = _pos_a
         self.pos_b = _pos_b
