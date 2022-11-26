@@ -14,8 +14,18 @@ class Piece(object):
     def get_moves(self):
         return self.possible_moves
 
-    def get_pos(self):
-        pass
+    
+    def get_pos_a(self):
+        """
+            return self.pos_a
+        """
+        return int(self.pos_a)
+        
+    def get_pos_b(self):
+        """
+            return self.pos_b
+        """
+        return int(self.pos_b)
 
     def change_pos(self, a, b):
         if( a < 0 or a > 7 or b < 0 or b > 7):

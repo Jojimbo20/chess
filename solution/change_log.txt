@@ -1,0 +1,25 @@
+21/11
+    Added all pieces 
+    Added their move matrices 
+    Added the Calculate Postion function
+    Added a print_moves() function to show moves
+
+    NEXT:
+        Add a matrix of pieces to the Board class
+        Add a List of pieces to the player classs
+
+22/11
+    Added a pieces[] to <Player> 
+    Added an __init__ to <Player>
+    Added Player.print_pieces()
+
+    NEXT:
+        Add a matrix of pieces to the Board class
+
+    Would be nice:
+        Format Player.print_pieces() to have all coordinates line up
+        For Piece.calculate_moves() Have it so that the generated possible_moves[] only includes possible moves and not [-1,-1] to represent illegal moves
+26/11 
+    Work on adding the Pieces to the board
+
+    Successfully added pieces to the board!
