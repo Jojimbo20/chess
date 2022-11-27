@@ -3,7 +3,7 @@ class Player(object):
     #The number of Pieces 
     def __init__(self, _colour):  
         self.colour = _colour
-        self.pieces = []
+        self.pieces = {}
 
         if _colour != "White" and _colour != "Black":
             print("ERROR: Colour must be 'White' or 'Black'")
@@ -27,22 +27,22 @@ class Player(object):
             pawn_8  = chess.Pawn_W(_colour, 6, 7)
 
             
-            self.pieces.append(king    )
-            self.pieces.append(queen   )
-            self.pieces.append(bishop_1)
-            self.pieces.append(bishop_2)
-            self.pieces.append(knight_1)
-            self.pieces.append(knight_2)
-            self.pieces.append(rook_1  )
-            self.pieces.append(rook_2  )
-            self.pieces.append(pawn_1  )
-            self.pieces.append(pawn_2  )
-            self.pieces.append(pawn_3  )
-            self.pieces.append(pawn_4  )
-            self.pieces.append(pawn_5  )
-            self.pieces.append(pawn_6  )
-            self.pieces.append(pawn_7  )
-            self.pieces.append(pawn_8  )
+            self.pieces['king'    ]   =  king    
+            self.pieces['queen'   ]   =  queen   
+            self.pieces['bishop_1']   =  bishop_1
+            self.pieces['bishop_2']   =  bishop_2
+            self.pieces['knight_1']   =  knight_1
+            self.pieces['knight_2']   =  knight_2
+            self.pieces['rook_1'  ]   =  rook_1  
+            self.pieces['rook_2'  ]   =  rook_2  
+            self.pieces['pawn_1'  ]   =  pawn_1  
+            self.pieces['pawn_2'  ]   =  pawn_2  
+            self.pieces['pawn_3'  ]   =  pawn_3  
+            self.pieces['pawn_4'  ]   =  pawn_4  
+            self.pieces['pawn_5'  ]   =  pawn_5  
+            self.pieces['pawn_6'  ]   =  pawn_6  
+            self.pieces['pawn_7'  ]   =  pawn_7  
+            self.pieces['pawn_8'  ]   =  pawn_8  
         else:
             king    = chess.King(_colour,   0, 3)
             queen   = chess.Queen(_colour,  0, 4)             
@@ -62,28 +62,33 @@ class Player(object):
             pawn_8  = chess.Pawn_B(_colour, 1, 7)
 
             
-            self.pieces.append(king    )
-            self.pieces.append(queen   )
-            self.pieces.append(bishop_1)
-            self.pieces.append(bishop_2)
-            self.pieces.append(knight_1)
-            self.pieces.append(knight_2)
-            self.pieces.append(rook_1  )
-            self.pieces.append(rook_2  )
-            self.pieces.append(pawn_1  )
-            self.pieces.append(pawn_2  )
-            self.pieces.append(pawn_3  )
-            self.pieces.append(pawn_4  )
-            self.pieces.append(pawn_5  )
-            self.pieces.append(pawn_6  )
-            self.pieces.append(pawn_7  )
-            self.pieces.append(pawn_8  )
+            self.pieces['king'    ]   =  king    
+            self.pieces['queen'   ]   =  queen   
+            self.pieces['bishop_1']   =  bishop_1
+            self.pieces['bishop_2']   =  bishop_2
+            self.pieces['knight_1']   =  knight_1
+            self.pieces['knight_2']   =  knight_2
+            self.pieces['rook_1'  ]   =  rook_1  
+            self.pieces['rook_2'  ]   =  rook_2  
+            self.pieces['pawn_1'  ]   =  pawn_1  
+            self.pieces['pawn_2'  ]   =  pawn_2  
+            self.pieces['pawn_3'  ]   =  pawn_3  
+            self.pieces['pawn_4'  ]   =  pawn_4  
+            self.pieces['pawn_5'  ]   =  pawn_5  
+            self.pieces['pawn_6'  ]   =  pawn_6  
+            self.pieces['pawn_7'  ]   =  pawn_7  
+            self.pieces['pawn_8'  ]   =  pawn_8
 
 
     def print_pieces(self):
-        for piece in self.pieces:
+        for piece in self.pieces.values():
             print(piece.name, str(piece.pos_a), str(piece.pos_b))
-    pass
+    
+
+    def move_piece(self, piece, pos_a, pos_b):
+            """
+                Implement me
+            """
 
 
 

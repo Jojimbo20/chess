@@ -1,7 +1,7 @@
 """
-    Added board.update(p1,p2)
-        Gets all of the pieces in p1 and p2's pieces[]
-        Adds them to the board. 
+    27/11 
+        Updated player.pieces from list to dictionary,
+        Ease of lookup and piece manipulation improved as a result... 
 
     NEXT:
         Add a way of moving pieces on the board. 
@@ -25,10 +25,6 @@ print("Success")
 Player_W.print_pieces()
 print("")
 Player_B.print_pieces()
-
-
-
-print(str(Player_B.pieces[2].get_pos_a()),"",str(Player_B.pieces[2].get_pos_b()))
 
 #board.register_players(p1,p2)
 

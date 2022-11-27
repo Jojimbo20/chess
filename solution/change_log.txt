@@ -20,6 +20,17 @@
         Format Player.print_pieces() to have all coordinates line up
         For Piece.calculate_moves() Have it so that the generated possible_moves[] only includes possible moves and not [-1,-1] to represent illegal moves
 26/11 
-    Work on adding the Pieces to the board
+ Added board.update(p1,p2)
+        Gets all of the pieces in p1 and p2's pieces[]
+        Adds them to the board. 
 
-    Successfully added pieces to the board!
+    NEXT:
+        Add a way of moving pieces on the board. 
+
+    Would be nice:
+        Format Player.print_pieces() to have all coordinates line up
+        For Piece.calculate_moves() Have it so that the generated possible_moves[] only includes possible moves and not [-1,-1] to represent illegal moves
+
+27/11 
+        Updated player.pieces from list to dictionary,
+        Ease of lookup and piece manipulation improved as a result... 

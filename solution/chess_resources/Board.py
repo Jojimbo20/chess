@@ -34,8 +34,12 @@ class Board(object):
         pass
 
     def update(self, p1,p2):
-        for piece in p1.pieces:
+        """
+            This has become obsolete as p.pieces are now dictionaries
+        """
+
+        for piece in p1.pieces.values():
             self.board[piece.get_pos_a()][piece.get_pos_b()] = piece
 
-        for piece in p2.pieces:
+        for piece in p2.pieces.values():
             self.board[piece.get_pos_a()][piece.get_pos_b()] = piece
