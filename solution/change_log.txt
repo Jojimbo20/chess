@@ -34,3 +34,35 @@
 27/11 
         Updated player.pieces from list to dictionary,
         Ease of lookup and piece manipulation improved as a result... 
+    01/12 
+        Overall changes: 
+            Added a print funtion to each class module for checking of successful access.
+            The board can now register moves and disallows the movement if the move is out of bounds or occupied by friendly.
+            
+        Board:
+            Added __init__(self, p1,p2) It's easier for reading if the board has player references
+            Added update(self) Resets the board to zero, re-populates matrix with pieces current positions. 
+            Added register_move(self, _piece, _pos_a, _pos_b)
+            Added is_legal_move(self, _piece, _pos_a, _pos_b):
+            Added calculate_moves(self, _piece):
+            
+        Pieces:
+            Added get functions; name, colour
+            Added possible moves[] to the parent class
+            Moved calculate_moves() to board class for access to all pieces positions in the game
+    NEXT:
+            Make sure all pieces move accordingly, 
+                (King doesn't put himself in danger) 
+                (Pawns only take diagonally)
+                (Units can't ghost through other units)(Queen, rook, bishop)
+            Add taking of pieces            
+            Add score keeping 
+            Add check condition
+            Add check mate condition
+
+
+    Would be nice:
+        Format Player.print_pieces() to have all coordinates line up
+        For Piece.calculate_moves() Have it so that the generated possible_moves[] only includes possible moves and not [-1,-1] to represent illegal moves
+        Represent pieces in a nice printed way. 
+        Type commands into command line

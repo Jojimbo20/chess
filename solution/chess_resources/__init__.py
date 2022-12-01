@@ -6,8 +6,8 @@ from .Pieces import Bishop
 from .Pieces import King
 from .Pieces import Knight
 from .Pieces import Queen
-from .Board import Board 
-from .Player import Player 
+from .Board import Board
+from .Player import Player
  
 
 

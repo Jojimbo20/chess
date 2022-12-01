@@ -1,6 +1,8 @@
+print("Pieces.py accessed")
 class Piece(object):
-    name = "test"
+    name = ""
     is_alive = True
+    possible_moves = []
 
     def __init__(self, _colour, _pos_a, _pos_b):
         self.colour = _colour
@@ -14,7 +16,9 @@ class Piece(object):
     def get_moves(self):
         return self.possible_moves
 
-    
+    def get_name(self):
+        return self.name
+
     def get_pos_a(self):
         """
             return self.pos_a
@@ -26,6 +30,11 @@ class Piece(object):
             return self.pos_b
         """
         return int(self.pos_b)
+    def get_colour(self):
+        """
+            return self.colour
+        """
+        return str(self.colour)
 
     def change_pos(self, a, b):
         if( a < 0 or a > 7 or b < 0 or b > 7):
@@ -36,34 +45,6 @@ class Piece(object):
         print("Position changed successfully")
 
 
-#Currently adds illegal positions that are occupied by the same territory. 
-    def calculate_moves(self):
-        #Make sure we are calculating from the current position.
-        for i in range(len(self.possible_moves)):
-                self.possible_moves[i][0]   = self.pos_a
-                self.possible_moves[i][-1]  = self.pos_b
-                pass
-
-        #Iterate through rows
-        for i in range(len(self.move_matrix)):
-            #Iterate through columns
-            for j in range(len(self.move_matrix[0])):
-
-                #Broke these into two if statements for readability, otherwise we would get a super long if statement. 
-                #if(The new pos_a is greater than 7 or less than 0) illegal move represented by -1
-                if(self.move_matrix[i][j] + self.possible_moves[i][j]) > 7 or (self.move_matrix[i][j] + self.possible_moves[i][j]) < 0:
-                    self.possible_moves[i][j] = -1
-                    self.possible_moves[i][-1] = -1
-                    break
-                #if(The new pos_b is greater than 7 or less than 0) illegal move, represented by -1
-                elif(self.move_matrix[i][-1] + self.possible_moves[i][-1]) > 7 or (self.move_matrix[i][-1] + self.possible_moves[i][-1]) < 0:
-                    self.possible_moves[i][j] = -1
-                    self.possible_moves[i][-1] = -1
-                    break
-
-                #Legal move, update the moveset. 
-                else:
-                    self.possible_moves[i][j] = self.move_matrix[i][j] + self.possible_moves[i][j]                
 
 class Pawn_W(Piece):
     name = "White Pawn"

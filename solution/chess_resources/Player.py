@@ -1,4 +1,6 @@
 import chess_resources as chess
+print("Player.py accessed")
+
 class Player(object):
     #The number of Pieces 
     def __init__(self, _colour):  
@@ -8,7 +10,6 @@ class Player(object):
         if _colour != "White" and _colour != "Black":
             print("ERROR: Colour must be 'White' or 'Black'")
         elif _colour == "White":
-            colour = _colour
             king    = chess.King(_colour,   7, 3)
             queen   = chess.Queen(_colour,  7, 4)             
             bishop_1= chess.Bishop(_colour, 7, 2)
@@ -85,10 +86,7 @@ class Player(object):
             print(piece.name, str(piece.pos_a), str(piece.pos_b))
     
 
-    def move_piece(self, piece, pos_a, pos_b):
-            """
-                Implement me
-            """
+
 
 
 
