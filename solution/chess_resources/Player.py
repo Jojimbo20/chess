@@ -6,6 +6,7 @@ class Player(object):
     def __init__(self, _colour):  
         self.colour = _colour
         self.pieces = {}
+        self.pieces_taken = {}
 
         if _colour != "White" and _colour != "Black":
             print("ERROR: Colour must be 'White' or 'Black'")

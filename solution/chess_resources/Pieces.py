@@ -17,6 +17,9 @@ class Piece(object):
         return self.possible_moves
 
     def get_name(self):
+        """
+            return self.name 
+        """
         return self.name
 
     def get_pos_a(self):
@@ -30,6 +33,7 @@ class Piece(object):
             return self.pos_b
         """
         return int(self.pos_b)
+
     def get_colour(self):
         """
             return self.colour
@@ -43,6 +47,12 @@ class Piece(object):
         self.pos_a = a
         self.pos_b = b
         print("Position changed successfully")
+
+    def is_in_moveset(self, _pos_a, _pos_b):
+        for pos in self.possible_moves:
+                if pos[0] == _pos_a and pos[1] == _pos_b:
+                    return True
+        return False
 
 
 

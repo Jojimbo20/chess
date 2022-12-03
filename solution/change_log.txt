@@ -34,7 +34,9 @@
 27/11 
         Updated player.pieces from list to dictionary,
         Ease of lookup and piece manipulation improved as a result... 
-    01/12 
+
+
+01/12 
         Overall changes: 
             Added a print funtion to each class module for checking of successful access.
             The board can now register moves and disallows the movement if the move is out of bounds or occupied by friendly.
@@ -64,5 +66,46 @@
     Would be nice:
         Format Player.print_pieces() to have all coordinates line up
         For Piece.calculate_moves() Have it so that the generated possible_moves[] only includes possible moves and not [-1,-1] to represent illegal moves
+        Represent pieces in a nice printed way. 
+        Type commands into command line
+
+    03/12 
+        Overall changes:         
+        Pawns can now only take diagonally and when space is occupied by enemy
+        Pawns can't march when space is occupied       
+        Units can't ghost through other units, Queen, rook, bishop
+        Added "Illegal move: Path blocked" error messages for Queen, Bishop and Rook
+        Added "Illegal move: Space occupied by friendly" Error message
+        Added "Illegal move: Pawn can't attack forwards. 
+
+            
+        Board:
+            Added path_is_blocked()
+            Added get_space()
+            
+        Pieces:
+            Added is_in_moveset()
+
+        Player:
+            Added pieces_taken{}
+
+    NEXT:
+            Make sure all pieces move accordingly,                 
+                (King doesn't put himself in danger)
+            Implement type catchers on is_legal_move()
+                Pawn Done
+                Bishop Done
+                Rook
+                Queen
+                King 
+
+            Add taking of pieces         
+            Pawns turn into a different piece when they make it to the top. 
+            Add score keeping 
+            Add check condition
+            Add check mate condition
+
+    Would be nice:
+        Format Player.print_pieces() to have all coordinates line up        
         Represent pieces in a nice printed way. 
         Type commands into command line

@@ -1,34 +1,42 @@
 """
-    01/12 
-        Overall changes: 
-            Added a print funtion to each class module for checking of successful access.
-            The board can now register moves and disallows the movement if the move is out of bounds or occupied by friendly.
+    03/12 
+        Overall changes:         
+        Pawns can now only take diagonally and when space is occupied by enemy
+        Pawns can't march when space is occupied       
+        Units can't ghost through other units, Queen, rook, bishop
+        Added "Illegal move: Path blocked" error messages for Queen, Bishop and Rook
+        Added "Illegal move: Space occupied by friendly" Error message
+        Added "Illegal move: Pawn can't attack forwards. 
+
             
         Board:
-            Added __init__(self, p1,p2) It's easier for reading if the board has player references
-            Added update(self) Resets the board to zero, re-populates matrix with pieces current positions. 
-            Added register_move(self, _piece, _pos_a, _pos_b)
-            Added is_legal_move(self, _piece, _pos_a, _pos_b):
-            Added calculate_moves(self, _piece):
+            Added path_is_blocked()
+            Added get_space()
             
         Pieces:
-            Added get functions; name, colour
-            Added possible moves[] to the parent class
-            Moved calculate_moves() to board class for access to all pieces positions in the game
+            Added is_in_moveset()
+
+        Player:
+            Added pieces_taken{}
+
     NEXT:
-            Make sure all pieces move accordingly, 
-                (King doesn't put himself in danger) 
-                (Pawns only take diagonally)
-                (Units can't ghost through other units)(Queen, rook, bishop)
-            Add taking of pieces            
+            Make sure all pieces move accordingly,                 
+                (King doesn't put himself in danger)
+            Implement type catchers on is_legal_move()
+                Pawn Done
+                Bishop Done
+                Rook
+                Queen
+                King 
+
+            Add taking of pieces         
+            Pawns turn into a different piece when they make it to the top. 
             Add score keeping 
             Add check condition
             Add check mate condition
 
-
     Would be nice:
-        Format Player.print_pieces() to have all coordinates line up
-        For Piece.calculate_moves() Have it so that the generated possible_moves[] only includes possible moves and not [-1,-1] to represent illegal moves
+        Format Player.print_pieces() to have all coordinates line up        
         Represent pieces in a nice printed way. 
         Type commands into command line
 """
@@ -54,10 +62,11 @@ Player_W.print_pieces()
 print("")
 #Player_W.move_piece("king",3,3)
 board.update()
-board.register_move(Player_W.pieces["king"], -1,3)
-
-
-
+board.register_move(Player_W.pieces["pawn_5"], 5,4)
+board.register_move(Player_B.pieces["pawn_2"], 2,1)
+board.register_move(Player_W.pieces["pawn_5"], 4,4)
+board.register_move(Player_B.pieces["pawn_2"], 3,1)
+board.register_move(Player_W.pieces["bishop_2"], 2,0)
 
 Player_W.print_pieces()
 print("")

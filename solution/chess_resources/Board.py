@@ -40,6 +40,7 @@ class Board(object):
         #Should get the current positions of the players Pieces and update board[][]
         pass
 
+    #Update
     def update(self):
         """
             This has become obsolete as p.pieces are now dictionaries
@@ -58,35 +59,156 @@ class Board(object):
 
         for piece in self.p2.pieces.values():
             self.board[piece.get_pos_a()][piece.get_pos_b()] = piece
+    
+    def path_is_blocked(self, _piece, _new_a, _new_b):
+        """
+            Returns True if path is blocked
+            Returns False if path is free
+        """
+        pos_a = _piece.get_pos_a()
+        pos_b = _piece.get_pos_b()
+
+        #Moving Down
+        if _new_a > pos_a:
+            #Moving Right
+            if _new_b > pos_b:
+                #Moving Down Right
+                spaces = abs(_new_a - pos_a)
+                for i in range(1,spaces):                        
+                    if self.get_space(_piece, pos_a + i, pos_b + i) != "EMPTY":
+                        return True 
+
+            elif _new_b < pos_b:
+                #Moving Down Left
+                spaces = abs(_new_a - pos_a)
+                for i in range(1,spaces):                        
+                    if self.get_space(_piece, pos_a + i, pos_b - i) != "EMPTY":
+                        return True
+
+            elif _new_b == pos_b:
+                #Moving Down
+                for i in range((pos_a+1), (_new_a - 1),1):
+                    if self.get_space(_piece, i, pos_b) != "EMPTY":
+                        return True 
+        
+        #Moving Up
+        if _new_a < pos_a:
+            if _new_b > pos_b:
+                #Diagonal Up Right
+                spaces = abs(pos_a - _new_a)
+                for i in range(1,spaces):                        
+                    if self.get_space(_piece, pos_a - i, pos_b + i) != "EMPTY":
+                        return True
+            elif _new_b < pos_b:
+                #Diagonal Up Left
+                spaces = abs(pos_a - _new_a)
+                for i in range(1,spaces):                        
+                    if self.get_space(_piece, pos_a - i, pos_b - i) != "EMPTY":
+                        return True
+
+            elif _new_b == pos_b:
+                #Up  
+                for i in range((pos_a-1), (_new_a + 1), -1):
+                    if self.get_space(_piece, i, pos_b) != "EMPTY":
+                        return True
+        
+        #Moving Left or Right
+        if _new_a == pos_a:
+            if _new_b > pos_b:
+                #Right 
+                for i in range((pos_b + 1), (_new_b - 1), 1):
+                    if self.get_space(_piece, pos_a, i) != "EMPTY":
+                        return True
+
+            elif _new_b < pos_b:
+                #Left
+                for i in range((pos_b - 1), (_new_b + 1), -1):
+                    if self.get_space(_piece, pos_a, i) != "EMPTY":
+                        return True
+
+    def get_space(self, _piece, _pos_a, _pos_b):
+        """
+            Gives you the status of a space relative to a piece            
+        """
+        space = self.board[_pos_a][_pos_b]
+
+        if space == 0:
+            return "EMPTY"
+        elif space.get_name() == _piece.get_name():
+            return "FRIENDLY"
+        else:
+            return "ENEMY"
+        
+
 
     def register_move(self, _piece, _pos_a, _pos_b):
+        #Check if move is in bounds
         if _pos_a < 0 or _pos_a > 7:
-            print("Illegal move: {piece} to {pos_a},{pos_b} is out of bounds.".format(piece=_piece.get_name(),pos_a=_pos_a,pos_b=_pos_b))
-        if self.is_legal_move(_piece, _pos_a, _pos_b):
-            piece = self.pieces[_piece]
-            piece.change_pos(_pos_a,_pos_b)
-            print("Move successful! {piece} now has position: {pos_a},{pos_b}".format(piece=_piece.get_name(),pos_a=_piece.get_pos_a(),pos_b=_piece.get_pos_b()))
+            print("Illegal move: {piece} to {pos_a},{pos_b} is out of bounds.".format(piece=_piece.get_name(),  pos_a=_pos_a,  pos_b=_pos_b))
+        
+        #If move is in bounds, check if it's a legal move for the piece. 
+        elif self.is_legal_move(_piece, _pos_a, _pos_b):
+            _piece.change_pos(_pos_a,_pos_b)
+            print("Move successful! {piece} now has position: {pos_a},{pos_b}".format(piece=_piece.get_name(),  pos_a=_piece.get_pos_a(),  pos_b=_piece.get_pos_b()))
+            self.update()
 
-    def is_legal_move(self, _piece, _pos_a, _pos_b):
+    def is_legal_move(self, _piece, _new_a, _new_b):
+        """
+            The legal move checker only needs to have specific rules for a few of the pieces:
+            Pawn: 
+                Can't march if the space infront is occupied DONE
+                Can only move diagonally if the space is occupied by enemy. DONE
+
+            Queen, Rook and Bishop: 
+                Can't move through a piece 
+            King:
+                Can't put himself into danger. 
+        """
+
         #Calulate possible moves based on position and move matrix
         self.update()
         self.calculate_moves(_piece)
         
-        #Retrieve the thing that is in the desired square
-        square = self.board[_pos_a][_pos_b]
+        #Retrieve the thing that is in the desired space
+        space = self.get_space(_piece, _new_a, _new_b)
+        piece_name = _piece.get_name()
 
-        #If the square is empty, or the square is ocupied by enemy,
-        #Check that it's within the bounds of movement 
-        if square == 0 or square.get_colour() != _piece.get_colour(): 
-            for pos in _piece.possible_moves:
-                if pos[0] == _pos_a and pos[1] == _pos_b:
-                    return True
-            print("Illegal Move: {piece} has no possible move ".format(piece=_piece.get_name()))
+        #Checks if it's in the pieces moveset
+        if _piece.is_in_moveset(_new_a, _new_b):            
 
-        elif square.get_colour() == _piece.get_colour():
-            print("Illegal Move: Space occupied by friendly.")
-            return False
+            #Check the desired space is empty:
+            if space == "EMPTY":                
+                #Pawn attempts to attack empty square: Dissallowed
+                if "Pawn" in piece_name and (_new_b != _piece.get_pos_b()):
+                    print("Illegal Move: Pawn cannot attack empty square")
+                    return False
+                if "Bishop" in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
+                    print("Illegal Move: Bishop's Path is blocked")
+                    return False
+                if "Queen" in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
+                    print("Illegal Move: Queens's Path is blocked")
+                    return False
+                if "Rook" in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
+                    print("Illegal Move: Rooks's Path is blocked")
+                    return False
 
+                return True
+
+            #Space is occupied by enemy, Take piece add it to players taken pieces, take it away from players pieces
+            elif space == "ENEMY":
+                if "Pawn" in piece_name and (_new_b == _piece.get_pos_b()):
+                    print("Illegal Move: Pawn cannot attack Forward")
+                    return False
+                """
+                    Successful attack. 
+                """
+
+            #Space is occupied by friendly: Illegal move
+            elif space == "FRIENDLY":
+                print("Illegal Move: Space occupied by friendly.")
+                return False
+            
+        print("Illegal Move: {piece} has no possible move ".format(piece=piece_name))
         return False        
 
     #Currently adds illegal positions that are occupied by the same territory. 
