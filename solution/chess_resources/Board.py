@@ -55,7 +55,7 @@ class Board(object):
                       [0,0,0,0,0,0,0,0]]
 
         for piece in self.p1.pieces.values():
-            self.board[piece.get_pos_a()][piece.get_pos_b()] = piece
+                self.board[piece.get_pos_a()][piece.get_pos_b()] = piece
 
         for piece in self.p2.pieces.values():
             self.board[piece.get_pos_a()][piece.get_pos_b()] = piece
@@ -134,12 +134,26 @@ class Board(object):
 
         if space == 0:
             return "EMPTY"
-        elif space.get_name() == _piece.get_name():
+        elif space.get_colour() == _piece.get_colour():
             return "FRIENDLY"
         else:
             return "ENEMY"
         
+    def attack_square(self, _pos_a, _pos_b):
+        _piece = self.board[_pos_a][_pos_b]
+        _piece_colour = _piece.get_colour()
+        if _piece == 0:
+            print("Attack Error: Square is empty, you messed up the code!")
 
+        elif _piece_colour in self.p1.get_colour():
+            self.p2.take_piece(_piece)
+            self.p1.kill_piece(_piece)
+
+        elif _piece_colour in self.p2.get_colour():
+            self.p1.take_piece(_piece)
+            self.p2.kill_piece(_piece)
+        
+        print("Attack Successful: {piece} has fallen.".format(piece =_piece.get_name()))
 
     def register_move(self, _piece, _pos_a, _pos_b):
         #Check if move is in bounds
@@ -164,14 +178,17 @@ class Board(object):
             King:
                 Can't put himself into danger. 
         """
-
-        #Calulate possible moves based on position and move matrix
-        self.update()
-        self.calculate_moves(_piece)
-        
         #Retrieve the thing that is in the desired space
         space = self.get_space(_piece, _new_a, _new_b)
         piece_name = _piece.get_name()
+
+        #Check to see if the piece is dead.
+        if _piece.is_alive() != True:
+            print("Illegal Move: {piece} has been felled".format(piece=piece_name))
+            return False
+
+        #Calulate possible moves based on position and move matrix
+        self.calculate_moves(_piece)     
 
         #Checks if it's in the pieces moveset
         if _piece.is_in_moveset(_new_a, _new_b):            
@@ -199,9 +216,9 @@ class Board(object):
                 if "Pawn" in piece_name and (_new_b == _piece.get_pos_b()):
                     print("Illegal Move: Pawn cannot attack Forward")
                     return False
-                """
-                    Successful attack. 
-                """
+
+                self.attack_square(_new_a, _new_b)
+                return True
 
             #Space is occupied by friendly: Illegal move
             elif space == "FRIENDLY":

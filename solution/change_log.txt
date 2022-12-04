@@ -109,3 +109,45 @@
         Format Player.print_pieces() to have all coordinates line up        
         Represent pieces in a nice printed way. 
         Type commands into command line
+
+    04/12 
+        Overall changes:         
+        Attacking and taking of pieces now works as it should
+        Added a way of checking a players score (Total of taken pieces)
+            
+        Board:
+            Added attack_square()
+            Added an is_alive() check to is_legal_move()
+            
+        Pieces:
+            moved name variable into  __init__()
+            Added kill(self)
+            Added is_alive()
+
+        Player:
+            Added get_colour()
+            Added self.score
+            Added get_score()
+            Added kill_piece()
+            Added take_piece()
+            Changed the naning properties of the pieces so that passing of names is easier and displaying of names is more specific. 
+
+    NEXT:
+            Make sure all pieces move accordingly,                 
+                (King doesn't put himself in danger)
+            Implement type catchers on is_legal_move()
+                Pawn Done
+                Bishop Done
+                Rook
+                Queen
+                King 
+
+            Pawns turn into a different piece when they make it to the top. 
+            Add score keeping 
+            Add check condition
+            Add check mate condition
+
+    Would be nice:
+        Format Player.print_pieces() to have all coordinates line up        
+        Represent pieces in a nice printed way. 
+        Type commands into command line

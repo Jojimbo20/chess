@@ -1,23 +1,25 @@
 """
-    03/12 
+    04/12 
         Overall changes:         
-        Pawns can now only take diagonally and when space is occupied by enemy
-        Pawns can't march when space is occupied       
-        Units can't ghost through other units, Queen, rook, bishop
-        Added "Illegal move: Path blocked" error messages for Queen, Bishop and Rook
-        Added "Illegal move: Space occupied by friendly" Error message
-        Added "Illegal move: Pawn can't attack forwards. 
-
+        Attacking and taking of pieces now works as it should
+        Added a way of checking a players score (Total of taken pieces)
             
         Board:
-            Added path_is_blocked()
-            Added get_space()
+            Added attack_square()
+            Added an is_alive() check to is_legal_move()
             
         Pieces:
-            Added is_in_moveset()
+            moved name variable into  __init__()
+            Added kill(self)
+            Added is_alive()
 
         Player:
-            Added pieces_taken{}
+            Added get_colour()
+            Added self.score
+            Added get_score()
+            Added kill_piece()
+            Added take_piece()
+            Changed the naning properties of the pieces so that passing of names is easier and displaying of names is more specific. 
 
     NEXT:
             Make sure all pieces move accordingly,                 
@@ -29,7 +31,6 @@
                 Queen
                 King 
 
-            Add taking of pieces         
             Pawns turn into a different piece when they make it to the top. 
             Add score keeping 
             Add check condition
@@ -62,11 +63,11 @@ Player_W.print_pieces()
 print("")
 #Player_W.move_piece("king",3,3)
 board.update()
-board.register_move(Player_W.pieces["pawn_5"], 5,4)
-board.register_move(Player_B.pieces["pawn_2"], 2,1)
-board.register_move(Player_W.pieces["pawn_5"], 4,4)
-board.register_move(Player_B.pieces["pawn_2"], 3,1)
-board.register_move(Player_W.pieces["bishop_2"], 2,0)
+board.register_move(Player_W.pieces["Pawn_5"], 5,4)
+board.register_move(Player_B.pieces["Pawn_2"], 2,1)
+board.register_move(Player_W.pieces["Pawn_5"], 4,4)
+board.register_move(Player_B.pieces["Pawn_2"], 3,1)
+board.register_move(Player_W.pieces["Bishop_2"], 3,1)
 
 Player_W.print_pieces()
 print("")

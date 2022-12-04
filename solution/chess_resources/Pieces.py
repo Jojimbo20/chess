@@ -4,8 +4,9 @@ class Piece(object):
     is_alive = True
     possible_moves = []
 
-    def __init__(self, _colour, _pos_a, _pos_b):
+    def __init__(self, _colour, _pos_a, _pos_b, _name):
         self.colour = _colour
+        self.name = _name
         self.pos_a = _pos_a
         self.pos_b = _pos_b
 
@@ -54,10 +55,17 @@ class Piece(object):
                     return True
         return False
 
+    def kill(self):
+        self.is_alive = False
+
+    def is_alive(self):
+        if self.is_alive:
+            return True
+        return False
+
 
 
 class Pawn_W(Piece):
-    name = "White Pawn"
     possible_moves = [[0,0],
                       [0,0],
                       [0,0]]
@@ -67,7 +75,6 @@ class Pawn_W(Piece):
                    [-1, 1]]#Take Top Right where enemy is present
 
 class Pawn_B(Piece):
-    name = "Black Pawn"
     possible_moves = [[0,0],
                       [0,0],
                       [0,0]]
@@ -77,7 +84,6 @@ class Pawn_B(Piece):
                    [1,-1]]#Take Bottom Left where enemy is present
 
 class Knight(Piece):
-    name = "Knight"
     possible_moves = [[0,0],
                       [0,0],
                       [0,0],
@@ -99,7 +105,6 @@ class Knight(Piece):
                    [ 2, 1]]
 
 class Queen(Piece):
-    name = "Queen"
     possible_moves = [[0,0],
                       [0,0],
                       [0,0],
@@ -216,7 +221,6 @@ class Queen(Piece):
                    [ 7,-7]]
 
 class Bishop(Piece):
-    name = "Bishop"
     #Bishop can move diagonally as long as path is not blocked 
     possible_moves = [[0,0],
                       [0,0],
@@ -278,7 +282,6 @@ class Bishop(Piece):
 
 
 class Rook(Piece):
-    name = "Rook"
     #Rook can move up down left right as long as path is not blocked 
     possible_moves = [[0,0],
                       [0,0],
@@ -339,7 +342,6 @@ class Rook(Piece):
                    [ 0, 7]]
 
 class King(Piece):
-    name = "King"
     #King can move in any direction one space
     #King can't move into a position where he puts himself in danger
     #King can't move into a position that's occupied by friendly piece
