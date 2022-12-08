@@ -47,7 +47,7 @@ class Piece(object):
             return False
         self.pos_a = a
         self.pos_b = b
-        print("Position changed successfully")
+        #print("Position changed successfully")
 
     def is_in_moveset(self, _pos_a, _pos_b):
         for pos in self.possible_moves:
@@ -66,22 +66,53 @@ class Piece(object):
 
 
 class Pawn_W(Piece):
-    possible_moves = [[0,0],
-                      [0,0],
-                      [0,0]]
+    first_turn = True
+    def __init__(self, _colour, _pos_a, _pos_b, _name):        
+        self.colour = _colour
+        self.name = _name
+        self.pos_a = _pos_a
+        self.pos_b = _pos_b
 
-    move_matrix = [[-1, 0],#March one forward where no enemy blocks path
-                   [-1,-1],#Take Top Left where enemy is present
-                   [-1, 1]]#Take Top Right where enemy is present
+        self.possible_moves = [[0,0],
+                          [0,0],
+                          [0,0],
+                          [0,0]]
+
+        self.move_matrix = [[-2, 0],#March two forward where no enemy blocks path and first_turn = True
+                       [-1, 0],#March one forward where no enemy blocks path
+                       [-1,-1],#Take Top Left where enemy is present
+                       [-1, 1]]#Take Top Right where enemy is present    
+
+    def first_turn_complete(self):
+        del self.possible_moves[0]
+        del self.move_matrix[0]        
+        self.first_turn = False
+
+
 
 class Pawn_B(Piece):
-    possible_moves = [[0,0],
-                      [0,0],
-                      [0,0]]
+    first_turn = True
+    def __init__(self, _colour, _pos_a, _pos_b, _name):        
+        self.colour = _colour
+        self.name = _name
+        self.pos_a = _pos_a
+        self.pos_b = _pos_b
 
-    move_matrix = [[1, 0],#March one forward where no enemy blocks path
-                   [1, 1],#Take Bottom Right where enemy is present
-                   [1,-1]]#Take Bottom Left where enemy is present
+        self.possible_moves = [[0,0],
+                               [0,0],
+                               [0,0],
+                               [0,0]]
+
+        self.move_matrix = [[2, 0],#March two forward where no enemy blocks path and first_turn = True
+                            [1, 0],#March one forward where no enemy blocks path
+                            [1, 1],#Take Bottom Right where enemy is present
+                            [1,-1]]#Take Bottom Left where enemy is present
+
+    def first_turn_complete(self):
+        del self.possible_moves[0]
+        del self.move_matrix[0]        
+        self.first_turn = False
+
 
 class Knight(Piece):
     possible_moves = [[0,0],
@@ -342,6 +373,7 @@ class Rook(Piece):
                    [ 0, 7]]
 
 class King(Piece):
+    check = False
     #King can move in any direction one space
     #King can't move into a position where he puts himself in danger
     #King can't move into a position that's occupied by friendly piece
@@ -362,4 +394,6 @@ class King(Piece):
                    [ 1, 0],#Down
                    [ 0,-1],#Right 
                    [ 0, 1]]#Left
+
+    
 

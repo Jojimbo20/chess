@@ -1,39 +1,40 @@
 """
-    04/12 
-        Overall changes:         
-        Attacking and taking of pieces now works as it should
-        Added a way of checking a players score (Total of taken pieces)
+    08/12 
+        BUGS >@<
+            ATTEMPTING TO MOVE A FALLEN PIECE
+            If an attempted move is made on a piece that has fallen, an error is thrown
+                The cause of this is to do with how pieces are taken, 
+                First they're added into player1.pieces_taken{}
+                The piece is then deleted from player2.pieces{}
+                So when 
+                board.register_move(Player_B.pieces["FALLEN_PIECE"], pos_a, pos_b)            
+                Is called, it's actually referencing a key pair that doesn't exist within the dictionary. 
+
+                The fix will have to be implemented later on when I implement a way of user input, 
+                With a catch to throw the error that the piece isn't alive before passing it to that function
+    
+
+        Overall changes:
+        Pawns can now move two spaces forward on the first go (BUGGY)
+        King can't put himself in danger 
+        Added check condition
+        Fixed the Pawn not being able to move two spaces on first go after one pawn has moved. 
             
         Board:
-            Added attack_square()
-            Added an is_alive() check to is_legal_move()
+            Added check_enemy()
+            Added uncheck_self()
+            Added puts_enemy_king_in_check()
+            Added puts_king_in_check()
+            
             
         Pieces:
-            moved name variable into  __init__()
-            Added kill(self)
-            Added is_alive()
+            Added first move conditions to Pawn_W and Pawn_B
 
         Player:
-            Added get_colour()
-            Added self.score
-            Added get_score()
-            Added kill_piece()
-            Added take_piece()
-            Changed the naning properties of the pieces so that passing of names is easier and displaying of names is more specific. 
 
     NEXT:
-            Make sure all pieces move accordingly,                 
-                (King doesn't put himself in danger)
-            Implement type catchers on is_legal_move()
-                Pawn Done
-                Bishop Done
-                Rook
-                Queen
-                King 
-
+            Pawns can move 2 forward on first turn (Half implemented - see bugs)
             Pawns turn into a different piece when they make it to the top. 
-            Add score keeping 
-            Add check condition
             Add check mate condition
 
     Would be nice:
@@ -48,40 +49,50 @@ Player_B = chess.Player("Black")
 board = chess.Board(Player_W, Player_B)
 
 print("game.py started successfully")
+print("")
 """
     Player.pieces{}
-    king
-    queen   
-    bishop_1/2
-    knight_1/2
-    rook_1/2 
-    pawn_1-8
+    King
+    Queen   
+    Bishop_1/2
+    Knight_1/2
+    Rook_1/2 
+    Pawn_1-8
 """
 
 
 Player_W.print_pieces()
 print("")
-#Player_W.move_piece("king",3,3)
 board.update()
-board.register_move(Player_W.pieces["Pawn_5"], 5,4)
-board.register_move(Player_B.pieces["Pawn_2"], 2,1)
-board.register_move(Player_W.pieces["Pawn_5"], 4,4)
-board.register_move(Player_B.pieces["Pawn_2"], 3,1)
-board.register_move(Player_W.pieces["Bishop_2"], 3,1)
 
+board.register_move(Player_W, Player_W.pieces["Pawn_4"], 4,3)
+board.register_move(Player_B, Player_B.pieces["Pawn_4"], 3,3)
+
+board.register_move(Player_B, Player_B.pieces["King"], 1,3)
+board.register_move(Player_B, Player_B.pieces["King"], 2,3)
+board.register_move(Player_B, Player_B.pieces["King"], 3,4)
+board.register_move(Player_W, Player_W.pieces["Pawn_5"], 4,4)
+board.register_move(Player_W, Player_W.pieces["Pawn_5"], 3,4)
+
+
+
+
+
+
+
+
+
+print("")
 Player_W.print_pieces()
 print("")
 Player_B.print_pieces()
 
 
-#board.register_players(p1,p2)
-
 """
-    Piece testing
+Piece testing
 Knight.calculate_moves()
 Knight.print_moves()
 Knight.change_pos(1,3)
-
 Knight.calculate_moves()
 Knight.print_moves()
 """

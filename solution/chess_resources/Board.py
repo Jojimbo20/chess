@@ -31,20 +31,11 @@ class Board(object):
         self.p2 = _p2
         self.update()
 
-    def a():
-        print("B Well done.")
-    
-    def get_coords(square):
-        pass
-    def update():
-        #Should get the current positions of the players Pieces and update board[][]
-        pass
 
-    #Update
+
+
+        
     def update(self):
-        """
-            This has become obsolete as p.pieces are now dictionaries
-        """
         self.board = [[0,0,0,0,0,0,0,0],
                       [0,0,0,0,0,0,0,0],
                       [0,0,0,0,0,0,0,0],
@@ -59,7 +50,17 @@ class Board(object):
 
         for piece in self.p2.pieces.values():
             self.board[piece.get_pos_a()][piece.get_pos_b()] = piece
-    
+
+
+
+
+
+                   
+
+
+
+
+
     def path_is_blocked(self, _piece, _new_a, _new_b):
         """
             Returns True if path is blocked
@@ -125,6 +126,12 @@ class Board(object):
                 for i in range((pos_b - 1), (_new_b + 1), -1):
                     if self.get_space(_piece, pos_a, i) != "EMPTY":
                         return True
+        return False
+
+
+
+
+
 
     def get_space(self, _piece, _pos_a, _pos_b):
         """
@@ -138,6 +145,12 @@ class Board(object):
             return "FRIENDLY"
         else:
             return "ENEMY"
+
+
+
+
+
+
         
     def attack_square(self, _pos_a, _pos_b):
         _piece = self.board[_pos_a][_pos_b]
@@ -153,18 +166,133 @@ class Board(object):
             self.p1.take_piece(_piece)
             self.p2.kill_piece(_piece)
         
-        print("Attack Successful: {piece} has fallen.".format(piece =_piece.get_name()))
+        print("Attack Successful: {player} {piece} has fallen.".format(player=_piece.get_colour(), piece =_piece.get_name()))
 
-    def register_move(self, _piece, _pos_a, _pos_b):
+
+
+
+
+
+
+    def register_move(self,_player, _piece, _pos_a, _pos_b):
+        print("{player} {piece} to {pos_a} {pos_b}".format(player=_piece.colour, piece=_piece.get_name(), pos_a =_pos_a, pos_b=_pos_b))
         #Check if move is in bounds
         if _pos_a < 0 or _pos_a > 7:
             print("Illegal move: {piece} to {pos_a},{pos_b} is out of bounds.".format(piece=_piece.get_name(),  pos_a=_pos_a,  pos_b=_pos_b))
+            return
+        
+        elif _player.pieces["King"].check == True:
+            if self.puts_king_in_check(_player, _piece, _pos_a, _pos_b) == True:
+                print("Illegal move: King is currently in check.\n")
+            elif self.is_legal_move(_piece, _pos_a, _pos_b):
+                print("Move successful! {player} {piece} now has position: {pos_a},{pos_b}".format(player =_piece.get_colour(), piece=_piece.get_name(),  pos_a=_piece.get_pos_a(),  pos_b=_piece.get_pos_b()),"\n")
+                self.uncheck_self(_piece)
+                self.update()
+                return
         
         #If move is in bounds, check if it's a legal move for the piece. 
         elif self.is_legal_move(_piece, _pos_a, _pos_b):
             _piece.change_pos(_pos_a,_pos_b)
-            print("Move successful! {piece} now has position: {pos_a},{pos_b}".format(piece=_piece.get_name(),  pos_a=_piece.get_pos_a(),  pos_b=_piece.get_pos_b()))
+            print("Move successful! {player} {piece} now has position: {pos_a},{pos_b}".format(player =_piece.get_colour(), piece=_piece.get_name(),  pos_a=_piece.get_pos_a(),  pos_b=_piece.get_pos_b()),"\n")
             self.update()
+            return
+
+    def puts_king_in_check(self, _piece, _new_a, _new_b):
+            #Make a copy of the board
+            temp = Board(self.p1, self.p2)
+
+            #Finalize the move on the new board
+            temp.board[_piece.get_pos_a()][_piece.get_pos_b()] = 0
+            temp.board[_new_a][_new_b] = _piece
+
+            if "White" in _piece.get_colour():
+                enemy_pieces = self.p2.pieces
+                king_pos = [0,0]
+
+                if "King" in _piece.get_name():
+                    king_pos[0] = _new_a
+                    king_pos[1] = _new_b
+                else:
+                    king = self.p1.pieces["King"]
+                    king_pos[0] = king.get_pos_a()
+                    king_pos[1] = king.get_pos_b()
+
+                for piece in enemy_pieces.values():
+                    self.calculate_moves(piece)
+                    for possible_move in piece.possible_moves:
+                        if possible_move == king_pos and temp.path_is_blocked(possible_move[0],possible_move[1]) == False:
+                            return True
+
+            elif "Black" in _piece.get_colour():                
+                enemy_pieces = self.p1.pieces                
+                king_pos = [0,0]
+
+                #If the King is moving, then we need the kings new coordinates
+                if "King" in _piece.get_name():
+                    king_pos[0] = _new_a
+                    king_pos[1] = _new_b
+
+                #Otherwise we need the Kings current coordinates
+                else:
+                    king = self.p2.pieces["King"]
+                    king_pos[0] = king.get_pos_a()
+                    king_pos[1] = king.get_pos_b()
+
+                for piece in enemy_pieces.values():
+                    self.calculate_moves(piece)
+                    for possible_move in piece.possible_moves:
+                        if possible_move == king_pos and temp.path_is_blocked(piece,possible_move[0],possible_move[1]) == False:
+                            return True
+
+            return False
+
+    def puts_enemy_king_in_check(self, _piece, _new_a, _new_b):
+            #Make a copy of the board with the new move finalised
+            temp = Board(self.p1,self.p2)
+            temp.board[_piece.get_pos_a()][_piece.get_pos_b()] = 0
+            temp.board[_new_a][_new_b] = _piece
+
+            if "White" in _piece.get_colour():
+                pieces = self.p1.pieces
+                enemy_king = self.p2.pieces["King"]
+                enemy_king_pos = [0,0]
+                enemy_king_pos[0] = enemy_king.get_pos_a()
+                enemy_king_pos[1] = enemy_king.get_pos_b()
+
+                for piece in pieces.values():
+                    self.calculate_moves(piece)
+                    for possible_move in piece.possible_moves:
+                        if possible_move == enemy_king_pos and temp.path_is_blocked(possible_move[0],possible_move[1]) == False:
+                            return True
+
+            elif "Black" in _piece.get_colour():                
+                pieces = self.p1.pieces
+                enemy_king = self.p2.pieces["King"]
+                enemy_king_pos = [0,0]
+                enemy_king_pos[0] = enemy_king.get_pos_a()
+                enemy_king_pos[1] = enemy_king.get_pos_b()
+
+                for piece in pieces.values():
+                    self.calculate_moves(piece)
+                    for possible_move in piece.possible_moves:
+                        if possible_move == enemy_king_pos and temp.path_is_blocked(possible_move[0],possible_move[1]) == False:
+                            return True
+
+            return False
+
+    def check_enemy(self, _piece):
+        if "White" in _piece.get_colour():
+            self.p2.pieces["King"].check == True
+
+        elif "Black" in _piece.get_colour():             
+            self.p1.pieces["King"].check == True
+
+    def uncheck_self(self, _piece):
+        if "White" in _piece.get_colour():
+            self.p1.pieces["King"].check == False
+
+        elif "Black" in _piece.get_colour():             
+            self.p2.pieces["King"].check == False
 
     def is_legal_move(self, _piece, _new_a, _new_b):
         """
@@ -196,18 +324,31 @@ class Board(object):
             #Check the desired space is empty:
             if space == "EMPTY":                
                 #Pawn attempts to attack empty square: Dissallowed
-                if "Pawn" in piece_name and (_new_b != _piece.get_pos_b()):
-                    print("Illegal Move: Pawn cannot attack empty square")
+                if "Pawn" in piece_name:
+                    if _new_b != _piece.get_pos_b():
+                        print("Illegal Move: Pawn cannot attack empty square")
+                        return False
+
+                    elif _piece.first_turn == True:
+                        _piece.first_turn_complete()
+                        return True
+
+                elif "Bishop" in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
+                    print("Illegal Move: Bishop's Path is blocked\n")
                     return False
-                if "Bishop" in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
-                    print("Illegal Move: Bishop's Path is blocked")
+                elif "Queen" in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
+                    print("Illegal Move: Queens's Path is blocked\n")
                     return False
-                if "Queen" in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
-                    print("Illegal Move: Queens's Path is blocked")
+                elif "Rook" in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
+                    print("Illegal Move: Rooks's Path is blocked\n")
                     return False
-                if "Rook" in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
-                    print("Illegal Move: Rooks's Path is blocked")
+                elif self.puts_king_in_check(_piece, _new_a, _new_b) == True:
+                    print("Illegal Move: Move puts King in check\n")
                     return False
+                elif self.puts_enemy_king_in_check(_piece, _new_a, _new_b) == True:
+                    print("Enemy King is in Danger.\n")
+                    self.check_enemy(_piece)
+                    return True
 
                 return True
 
@@ -228,13 +369,18 @@ class Board(object):
         print("Illegal Move: {piece} has no possible move ".format(piece=piece_name))
         return False        
 
+
+
+
+
+
+
     #Currently adds illegal positions that are occupied by the same territory. 
     def calculate_moves(self, _piece):
         #Make sure we are calculating from the current position.
         for row_index in range(len(_piece.possible_moves)):
                 _piece.possible_moves[row_index][0]   = _piece.pos_a
                 _piece.possible_moves[row_index][-1]  = _piece.pos_b
-
 
         #Iterate through rows
         for row_index in range(len(_piece.move_matrix)):

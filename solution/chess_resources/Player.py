@@ -86,7 +86,8 @@ class Player(object):
 
     def print_pieces(self):
         for piece in self.pieces.values():
-            print(piece.name, str(piece.pos_a), str(piece.pos_b))
+            print(piece.colour, piece.name,"\t", str(piece.pos_a), str(piece.pos_b))
+        print("Total pieces alive: {num_of_pieces}".format(num_of_pieces=len(self.pieces)))
     
     def get_colour(self):
         return self.colour
