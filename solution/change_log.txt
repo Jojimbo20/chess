@@ -69,7 +69,7 @@
         Represent pieces in a nice printed way. 
         Type commands into command line
 
-    03/12 
+03/12 
         Overall changes:         
         Pawns can now only take diagonally and when space is occupied by enemy
         Pawns can't march when space is occupied       
@@ -110,7 +110,7 @@
         Represent pieces in a nice printed way. 
         Type commands into command line
 
-    04/12 
+04/12 
         Overall changes:         
         Attacking and taking of pieces now works as it should
         Added a way of checking a players score (Total of taken pieces)
@@ -153,7 +153,7 @@
         Type commands into command line
 
 
-    08/12 
+08/12 
         BUGS >@<
             ATTEMPTING TO MOVE A FALLEN PIECE
             If an attempted move is made on a piece that has fallen, an error is thrown
@@ -192,6 +192,53 @@
             Add check mate condition
 
     Would be nice:
+        Format Player.print_pieces() to have all coordinates line up        
+        Represent pieces in a nice printed way. 
+        Type commands into command line
+
+10/12 
+        BUGS >@<
+            ATTEMPTING TO MOVE A FALLEN PIECE
+            If an attempted move is made on a piece that has fallen, an error is thrown
+                The cause of this is to do with how pieces are taken, 
+                First they're added into player1.pieces_taken{}
+                The piece is then deleted from player2.pieces{}
+                So when 
+                board.register_move(Player_B.pieces["FALLEN_PIECE"], pos_a, pos_b)            
+                Is called, it's actually referencing a key pair that doesn't exist within the dictionary. 
+                The fix will have to be implemented later on when I implement a way of interacting with the board Library
+                With a catch to throw the error that the piece isn't alive before passing it to that functions
+
+                King throwing Illegal move:  Puts self in check error when it's a legal move
+                Something to do with Bishop returning path clear in puts_king_in_check()
+    
+
+        Overall changes:
+            
+            
+        Board:
+            __init__() no longer requires player references
+            Added valid_names tuple
+            Added a Move counter (Yet to implement fucntionality)
+            Added is_valid_name()
+            Changed register_move() funcitonality
+                Is now used as such register_move(player, piece, pos_a, pos_b) where 'player' and 'piece' are string references
+            Fixed some King check bugs
+            Cleaned up is_legal_move() for readability and removed redundant code
+
+            
+            
+        Pieces:
+
+        Player:
+
+    NEXT:
+            Fix King throwing Illegal move bug
+            Pawns turn into a different piece when they make it to the top.
+            Add check mate condition
+
+    Would be nice:
+        Add board.move_counter() functionality
         Format Player.print_pieces() to have all coordinates line up        
         Represent pieces in a nice printed way. 
         Type commands into command line

@@ -26,9 +26,20 @@ class Board(object):
               [0,0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0,0]]
 
-    def __init__(self, _p1, _p2):
-        self.p1 = _p1
-        self.p2 = _p2
+    valid_names = ("King","Queen",
+                   "Bishop_1","Bishop_2",
+                   "Knight_1","Knight_2",
+                   "Rook_1","Rook_2",
+                   "Pawn_1","Pawn_2",
+                   "Pawn_3","Pawn_4",
+                   "Pawn_5","Pawn_6",
+                   "Pawn_7","Pawn_8")
+
+    move_counter = {"Total_Moves":0}
+
+    def __init__(self):
+        self.p1 = chess.Player("White")
+        self.p2 = chess.Player("Black")
         self.update()
 
 
@@ -170,36 +181,61 @@ class Board(object):
 
 
 
+    def is_valid_name(self, _piece):    
+        for name in self.valid_names:
+            if _piece in name:
+                return True        
+        return False
+                            
 
 
 
 
-    def register_move(self,_player, _piece, _pos_a, _pos_b):
-        print("{player} {piece} to {pos_a} {pos_b}".format(player=_piece.colour, piece=_piece.get_name(), pos_a =_pos_a, pos_b=_pos_b))
+
+
+    def register_move(self, _player, _piece, _pos_a, _pos_b):
+        if "White" in _player:
+            player = self.p1
+        elif "Black" in _player:
+            player = self.p2
+        else:
+            print("{entry} is an invalid player. Please enter 'White' or 'Black'.".format(entry=_player))
+            return
+            
+        if self.is_valid_name(_piece) != True:
+            print("Name invalid, please enter a valid name from the list: {names}".format(names=self.valid_names))
+            return
+
+        piece = player.pieces[_piece]
+
+
+        print("Attempting {player} {piece} to {pos_a} {pos_b}".format(player=piece.colour, piece=piece.get_name(), pos_a =_pos_a, pos_b=_pos_b))
         #Check if move is in bounds
         if _pos_a < 0 or _pos_a > 7:
-            print("Illegal move: {piece} to {pos_a},{pos_b} is out of bounds.".format(piece=_piece.get_name(),  pos_a=_pos_a,  pos_b=_pos_b))
+            print("Illegal move: {piece} to {pos_a},{pos_b} is out of bounds.".format(piece=piece.get_name(),  pos_a=_pos_a,  pos_b=_pos_b))
             return
         
-        elif _player.pieces["King"].check == True:
-            if self.puts_king_in_check(_player, _piece, _pos_a, _pos_b) == True:
+        elif player.pieces["King"].check == True:
+            if self.puts_king_in_check(player, piece, _pos_a, _pos_b) == True:
                 print("Illegal move: King is currently in check.\n")
-            elif self.is_legal_move(_piece, _pos_a, _pos_b):
-                print("Move successful! {player} {piece} now has position: {pos_a},{pos_b}".format(player =_piece.get_colour(), piece=_piece.get_name(),  pos_a=_piece.get_pos_a(),  pos_b=_piece.get_pos_b()),"\n")
-                self.uncheck_self(_piece)
+            elif self.is_legal_move(piece, _pos_a, _pos_b):
+                print("Move successful! {player} {piece} now has position: {pos_a},{pos_b}".format(player =piece.get_colour(), piece=piece.get_name(),  pos_a=piece.get_pos_a(),  pos_b=piece.get_pos_b()),"\n")
+                self.uncheck_self(piece)
                 self.update()
                 return
         
         #If move is in bounds, check if it's a legal move for the piece. 
-        elif self.is_legal_move(_piece, _pos_a, _pos_b):
-            _piece.change_pos(_pos_a,_pos_b)
-            print("Move successful! {player} {piece} now has position: {pos_a},{pos_b}".format(player =_piece.get_colour(), piece=_piece.get_name(),  pos_a=_piece.get_pos_a(),  pos_b=_piece.get_pos_b()),"\n")
+        elif self.is_legal_move(piece, _pos_a, _pos_b):
+            piece.change_pos(_pos_a,_pos_b)
+            print("Move successful! {player} {piece} now has position: {pos_a},{pos_b}".format(player =piece.get_colour(), piece=piece.get_name(),  pos_a=piece.get_pos_a(),  pos_b=piece.get_pos_b()),"\n")
             self.update()
             return
 
     def puts_king_in_check(self, _piece, _new_a, _new_b):
             #Make a copy of the board
-            temp = Board(self.p1, self.p2)
+            temp = Board()
+            temp.p1 = self.p1
+            temp.p2 = self.p2
 
             #Finalize the move on the new board
             temp.board[_piece.get_pos_a()][_piece.get_pos_b()] = 0
@@ -220,7 +256,7 @@ class Board(object):
                 for piece in enemy_pieces.values():
                     self.calculate_moves(piece)
                     for possible_move in piece.possible_moves:
-                        if possible_move == king_pos and temp.path_is_blocked(possible_move[0],possible_move[1]) == False:
+                        if possible_move == king_pos and temp.path_is_blocked(piece, possible_move[0],possible_move[1]) == False:
                             return True
 
             elif "Black" in _piece.get_colour():                
@@ -241,19 +277,23 @@ class Board(object):
                 for piece in enemy_pieces.values():
                     self.calculate_moves(piece)
                     for possible_move in piece.possible_moves:
-                        if possible_move == king_pos and temp.path_is_blocked(piece,possible_move[0],possible_move[1]) == False:
+                        if possible_move == king_pos and temp.path_is_blocked(piece, possible_move[0],possible_move[1]) == False:
                             return True
 
             return False
 
     def puts_enemy_king_in_check(self, _piece, _new_a, _new_b):
             #Make a copy of the board with the new move finalised
-            temp = Board(self.p1,self.p2)
+            temp = Board()
+            temp.p1 = self.p1
+            temp.p2 = self.p2
+
             temp.board[_piece.get_pos_a()][_piece.get_pos_b()] = 0
             temp.board[_new_a][_new_b] = _piece
 
             if "White" in _piece.get_colour():
                 pieces = self.p1.pieces
+                pieces[_piece.get_name()] = _piece
                 enemy_king = self.p2.pieces["King"]
                 enemy_king_pos = [0,0]
                 enemy_king_pos[0] = enemy_king.get_pos_a()
@@ -262,12 +302,13 @@ class Board(object):
                 for piece in pieces.values():
                     self.calculate_moves(piece)
                     for possible_move in piece.possible_moves:
-                        if possible_move == enemy_king_pos and temp.path_is_blocked(possible_move[0],possible_move[1]) == False:
+                        if possible_move == enemy_king_pos and temp.path_is_blocked(piece, possible_move[0],possible_move[1]) == False:
                             return True
 
             elif "Black" in _piece.get_colour():                
-                pieces = self.p1.pieces
-                enemy_king = self.p2.pieces["King"]
+                pieces = self.p2.pieces
+                pieces[_piece.get_name()] = _piece
+                enemy_king = self.p1.pieces["King"]
                 enemy_king_pos = [0,0]
                 enemy_king_pos[0] = enemy_king.get_pos_a()
                 enemy_king_pos[1] = enemy_king.get_pos_b()
@@ -275,7 +316,7 @@ class Board(object):
                 for piece in pieces.values():
                     self.calculate_moves(piece)
                     for possible_move in piece.possible_moves:
-                        if possible_move == enemy_king_pos and temp.path_is_blocked(possible_move[0],possible_move[1]) == False:
+                        if possible_move == enemy_king_pos and temp.path_is_blocked(piece, possible_move[0],possible_move[1]) == False:
                             return True
 
             return False
@@ -295,79 +336,95 @@ class Board(object):
             self.p2.pieces["King"].check == False
 
     def is_legal_move(self, _piece, _new_a, _new_b):
-        """
-            The legal move checker only needs to have specific rules for a few of the pieces:
-            Pawn: 
-                Can't march if the space infront is occupied DONE
-                Can only move diagonally if the space is occupied by enemy. DONE
+        ##############
+        # EXIT CASES #
+        ############## 
 
-            Queen, Rook and Bishop: 
-                Can't move through a piece 
-            King:
-                Can't put himself into danger. 
-        """
-        #Retrieve the thing that is in the desired space
-        space = self.get_space(_piece, _new_a, _new_b)
+        #Get the piece name for easier referencing 
         piece_name = _piece.get_name()
-
-        #Check to see if the piece is dead.
-        if _piece.is_alive() != True:
+             
+        #1) Piece is dead
+        if _piece.is_alive() != True:            
             print("Illegal Move: {piece} has been felled".format(piece=piece_name))
             return False
 
-        #Calulate possible moves based on position and move matrix
-        self.calculate_moves(_piece)     
+        #2) Illegal move pattern
+        #Calulate possible moves based on position and move matrix then check if the move is in the moveset
+        self.calculate_moves(_piece)   
+        if _piece.is_in_moveset(_new_a, _new_b) != True:            
+            print("Illegal Move: {piece} has no possible move ".format(piece=piece_name))
+            return False
+        
+        ##################
+        # RULE CHECKING: #
+        ##################
 
-        #Checks if it's in the pieces moveset
-        if _piece.is_in_moveset(_new_a, _new_b):            
+        #Get status of the desired space: "EMPTY" "FRIENDLY "ENEMY"
+        space = self.get_space(_piece, _new_a, _new_b)
 
-            #Check the desired space is empty:
-            if space == "EMPTY":                
-                #Pawn attempts to attack empty square: Dissallowed
-                if "Pawn" in piece_name:
-                    if _new_b != _piece.get_pos_b():
-                        print("Illegal Move: Pawn cannot attack empty square")
-                        return False
+        #Space is occupied by friendly: Illegal move
+        if space == "FRIENDLY":
+            print("Illegal Move: Space occupied by friendly.")
+            return False
 
-                    elif _piece.first_turn == True:
-                        _piece.first_turn_complete()
-                        return True
-
-                elif "Bishop" in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
-                    print("Illegal Move: Bishop's Path is blocked\n")
-                    return False
-                elif "Queen" in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
-                    print("Illegal Move: Queens's Path is blocked\n")
-                    return False
-                elif "Rook" in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
-                    print("Illegal Move: Rooks's Path is blocked\n")
-                    return False
-                elif self.puts_king_in_check(_piece, _new_a, _new_b) == True:
-                    print("Illegal Move: Move puts King in check\n")
-                    return False
-                elif self.puts_enemy_king_in_check(_piece, _new_a, _new_b) == True:
-                    print("Enemy King is in Danger.\n")
-                    self.check_enemy(_piece)
-                    return True
-
-                return True
-
-            #Space is occupied by enemy, Take piece add it to players taken pieces, take it away from players pieces
-            elif space == "ENEMY":
-                if "Pawn" in piece_name and (_new_b == _piece.get_pos_b()):
-                    print("Illegal Move: Pawn cannot attack Forward")
-                    return False
-
-                self.attack_square(_new_a, _new_b)
-                return True
-
-            #Space is occupied by friendly: Illegal move
-            elif space == "FRIENDLY":
-                print("Illegal Move: Space occupied by friendly.")
+        ############################
+        # MOVING INTO EMPTY SPACE: #
+        ############################
+        elif space == "EMPTY":
+        
+            #Rule: Move can't put your king in check
+            if self.puts_king_in_check(_piece, _new_a, _new_b) == True:
+                print("Illegal Move: Move puts King in check\n")
                 return False
+        
+            #Rule: Pieces can't move through other pieces with the exeption of Knights
+            elif "Knight" not in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
+                print("Illegal Move: {piece}'s Path is blocked\n".format(piece=piece_name))
+                return False
+        
+            #Pawns have two rules
+            elif "Pawn" in piece_name:        
+                
+                #Rule 1: Pawns can only move diagonally when attacking
+                if _new_b != _piece.get_pos_b():
+                    print("Illegal Move: Pawn cannot attack empty square")
+                    return False
+        
+                #Rule 2: Pawn can move two spaces on the first turn only
+                elif _piece.first_turn == True:
+                    
+                    #Removes the ability to move two forward after 1st move
+                    _piece.first_turn_complete()
+
+            #Check if move puts enemy king in check
+            if self.puts_enemy_king_in_check(_piece, _new_a, _new_b) == True:
+                print("Enemy King is in Check.\n")
+                self.check_enemy(_piece)
+        
+            #Checks passed, move is legal. 
+            return True
+        
+        ######################
+        # ATTACKING A SPACE: #
+        ######################
+        elif space == "ENEMY":
+
+            #Rule: Pawns can't attack forward. 
+            if "Pawn" in piece_name and (_new_b == _piece.get_pos_b()):
+                print("Illegal Move: Pawn cannot attack Forward")
+                return False
+            #Check if move puts enemy king in check
+            if self.puts_enemy_king_in_check(_piece, _new_a, _new_b) == True:
+                print("Enemy King is in Check.\n")
+                self.check_enemy(_piece)
             
-        print("Illegal Move: {piece} has no possible move ".format(piece=piece_name))
-        return False        
+            #Legal attack
+            self.attack_square(_new_a, _new_b)
+            return True
+        
+
+            
+                
 
 
 

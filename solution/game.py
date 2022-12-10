@@ -1,5 +1,5 @@
 """
-    08/12 
+    10/12 
         BUGS >@<
             ATTEMPTING TO MOVE A FALLEN PIECE
             If an attempted move is made on a piece that has fallen, an error is thrown
@@ -9,44 +9,46 @@
                 So when 
                 board.register_move(Player_B.pieces["FALLEN_PIECE"], pos_a, pos_b)            
                 Is called, it's actually referencing a key pair that doesn't exist within the dictionary. 
+                The fix will have to be implemented later on when I implement a way of interacting with the board Library
+                With a catch to throw the error that the piece isn't alive before passing it to that functions
 
-                The fix will have to be implemented later on when I implement a way of user input, 
-                With a catch to throw the error that the piece isn't alive before passing it to that function
+                King throwing Illegal move:  Puts self in check error when it's a legal move
+                Something to do with Bishop returning path clear in puts_king_in_check()
     
 
         Overall changes:
-        Pawns can now move two spaces forward on the first go (BUGGY)
-        King can't put himself in danger 
-        Added check condition
-        Fixed the Pawn not being able to move two spaces on first go after one pawn has moved. 
+            
             
         Board:
-            Added check_enemy()
-            Added uncheck_self()
-            Added puts_enemy_king_in_check()
-            Added puts_king_in_check()
+            __init__() no longer requires player references
+            Added valid_names tuple
+            Added a Move counter (Yet to implement fucntionality)
+            Added is_valid_name()
+            Changed register_move() funcitonality
+                Is now used as such register_move(player, piece, pos_a, pos_b) where 'player' and 'piece' are string references
+            Fixed some King check bugs
+            Cleaned up is_legal_move() for readability and removed redundant code
+
             
             
         Pieces:
-            Added first move conditions to Pawn_W and Pawn_B
 
         Player:
 
     NEXT:
-            Pawns can move 2 forward on first turn (Half implemented - see bugs)
-            Pawns turn into a different piece when they make it to the top. 
+            Fix King throwing Illegal move bug
+            Pawns turn into a different piece when they make it to the top.
             Add check mate condition
 
     Would be nice:
+        Add board.move_counter() functionality
         Format Player.print_pieces() to have all coordinates line up        
         Represent pieces in a nice printed way. 
         Type commands into command line
 """
 import chess_resources as chess
 
-Player_W = chess.Player("White")
-Player_B = chess.Player("Black")
-board = chess.Board(Player_W, Player_B)
+game = chess.Board()
 
 print("game.py started successfully")
 print("")
@@ -61,31 +63,28 @@ print("")
 """
 
 
-Player_W.print_pieces()
+game.p1.print_pieces()
 print("")
-board.update()
+game.update()
 
-board.register_move(Player_W, Player_W.pieces["Pawn_4"], 4,3)
-board.register_move(Player_B, Player_B.pieces["Pawn_4"], 3,3)
-
-board.register_move(Player_B, Player_B.pieces["King"], 1,3)
-board.register_move(Player_B, Player_B.pieces["King"], 2,3)
-board.register_move(Player_B, Player_B.pieces["King"], 3,4)
-board.register_move(Player_W, Player_W.pieces["Pawn_5"], 4,4)
-board.register_move(Player_W, Player_W.pieces["Pawn_5"], 3,4)
-
-
-
-
-
+game.register_move("White", "Pawn_2",      5,1)
+game.register_move("Black", "Pawn_3",      3,2)
+game.register_move("White", "Bishop_1",    5,0)
+game.register_move("Black", "King",        1,2)
+game.register_move("White", "Pawn_6",      5,5)
+game.register_move("Black", "King",        2,3)
+game.register_move("White", "Pawn_6",      4,5)
+game.register_move("Black", "Pawn_3",      4,2)
+game.register_move("Black", "King",        2,4)
+game.register_move("White", "Pawn_6",      3,5)
 
 
 
 
 print("")
-Player_W.print_pieces()
+game.p1.print_pieces()
 print("")
-Player_B.print_pieces()
+game.p2.print_pieces()
 
 
 """
