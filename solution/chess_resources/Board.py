@@ -189,9 +189,12 @@ class Board(object):
                             
 
 
-
-
-
+    def king_check_printer(self):
+        if self.p1.pieces["King"].check == True:
+            print("White's King is in Check.")
+        
+        elif self.p2.pieces["King"].check == True:            
+            print("Black's King is in Check.")
 
     def register_move(self, _player, _piece, _pos_a, _pos_b):
         if "White" in _player:
@@ -209,17 +212,17 @@ class Board(object):
         piece = player.pieces[_piece]
 
 
-        print("Attempting {player} {piece} to {pos_a} {pos_b}".format(player=piece.colour, piece=piece.get_name(), pos_a =_pos_a, pos_b=_pos_b))
+        print("\nAttempting {player} {piece} to {pos_a} {pos_b}".format(player=_player, piece=_piece, pos_a =_pos_a, pos_b=_pos_b))
         #Check if move is in bounds
         if _pos_a < 0 or _pos_a > 7:
             print("Illegal move: {piece} to {pos_a},{pos_b} is out of bounds.".format(piece=piece.get_name(),  pos_a=_pos_a,  pos_b=_pos_b))
             return
         
         elif player.pieces["King"].check == True:
-            if self.puts_king_in_check(player, piece, _pos_a, _pos_b) == True:
+            if self.puts_king_in_check(piece, _pos_a, _pos_b) == True:
                 print("Illegal move: King is currently in check.\n")
             elif self.is_legal_move(piece, _pos_a, _pos_b):
-                print("Move successful! {player} {piece} now has position: {pos_a},{pos_b}".format(player =piece.get_colour(), piece=piece.get_name(),  pos_a=piece.get_pos_a(),  pos_b=piece.get_pos_b()),"\n")
+                print("Move successful! {player} {piece} now has position: {pos_a},{pos_b}".format(player=_player, piece=_piece, pos_a =_pos_a, pos_b=_pos_b))
                 self.uncheck_self(piece)
                 self.update()
                 return
@@ -227,27 +230,30 @@ class Board(object):
         #If move is in bounds, check if it's a legal move for the piece. 
         elif self.is_legal_move(piece, _pos_a, _pos_b):
             piece.change_pos(_pos_a,_pos_b)
-            print("Move successful! {player} {piece} now has position: {pos_a},{pos_b}".format(player =piece.get_colour(), piece=piece.get_name(),  pos_a=piece.get_pos_a(),  pos_b=piece.get_pos_b()),"\n")
+            print("Move successful! {player} {piece} now has position: {pos_a},{pos_b}".format(player=_player, piece=_piece, pos_a =_pos_a, pos_b=_pos_b))
+            self.king_check_printer()
             self.update()
             return
 
-    def puts_king_in_check(self, _piece, _new_a, _new_b):
-            #Make a copy of the board
-            temp = Board()
-            temp.p1 = self.p1
-            temp.p2 = self.p2
 
-            #Finalize the move on the new board
-            temp.board[_piece.get_pos_a()][_piece.get_pos_b()] = 0
-            temp.board[_new_a][_new_b] = _piece
+    def puts_king_in_check(self, _piece, _new_a, _new_b):
+            #Save the piece that's on the board so that we can reset it later 
+            save_piece = self.board[_new_a][_new_b]
+
+            #Finalize the move on the board
+            self.board[_piece.get_pos_a()][_piece.get_pos_b()] = 0            
+            self.board[_new_a][_new_b] = _piece
 
             if "White" in _piece.get_colour():
                 enemy_pieces = self.p2.pieces
                 king_pos = [0,0]
 
+                #If the King is moving, then we need the kings new coordinates
                 if "King" in _piece.get_name():
                     king_pos[0] = _new_a
                     king_pos[1] = _new_b
+                    
+                #Otherwise we need the Kings current coordinates
                 else:
                     king = self.p1.pieces["King"]
                     king_pos[0] = king.get_pos_a()
@@ -255,8 +261,18 @@ class Board(object):
 
                 for piece in enemy_pieces.values():
                     self.calculate_moves(piece)
+
+                    #Pawns can't attack diagonally so no poin't calculting their moves if king is infront of them
+                    if "Pawn" in piece.get_name() and possible_move[1] == king_pos[1]:
+                        continue
+
+                    #For each enemy piece, check the possible moves to see if any of them match with the Kings postion 
                     for possible_move in piece.possible_moves:
-                        if possible_move == king_pos and temp.path_is_blocked(piece, possible_move[0],possible_move[1]) == False:
+                        if possible_move == king_pos and self.path_is_blocked(piece, possible_move[0],possible_move[1]) == False:
+
+                            #Reset the board to it's original state
+                            self.board[_new_a][_new_b] = save_piece
+                            self.board[_piece.get_pos_a()][_piece.get_pos_b()] = _piece
                             return True
 
             elif "Black" in _piece.get_colour():                
@@ -276,24 +292,35 @@ class Board(object):
 
                 for piece in enemy_pieces.values():
                     self.calculate_moves(piece)
+
+                    #Pawns can't attack diagonally so no poin't calculting their moves if king is infront of them
+                    if "Pawn" in piece.get_name() and piece.get_pos_b() == king_pos[1]:
+                        continue
+
+                    #For each enemy piece, check the possible moves to see if any of them match with the Kings postion
                     for possible_move in piece.possible_moves:
-                        if possible_move == king_pos and temp.path_is_blocked(piece, possible_move[0],possible_move[1]) == False:
+                        if possible_move == king_pos and self.path_is_blocked(piece, possible_move[0],possible_move[1]) == False:
+                            #Reset the board to it's original state
+                            self.board[_new_a][_new_b] = save_piece
+                            self.board[_piece.get_pos_a()][_piece.get_pos_b()] = _piece
                             return True
 
+            #Reset the board to it's original state
+            self.board[_new_a][_new_b] = save_piece
+            self.board[_piece.get_pos_a()][_piece.get_pos_b()] = _piece           
             return False
+
 
     def puts_enemy_king_in_check(self, _piece, _new_a, _new_b):
             #Make a copy of the board with the new move finalised
-            temp = Board()
-            temp.p1 = self.p1
-            temp.p2 = self.p2
-
-            temp.board[_piece.get_pos_a()][_piece.get_pos_b()] = 0
-            temp.board[_new_a][_new_b] = _piece
+            old_pos_a = _piece.get_pos_a()
+            old_pos_b = _piece.get_pos_b()
+            self.board[old_pos_a][old_pos_b] = 0
+            _piece.change_pos(_new_a, _new_b)            
+            self.board[_new_a][_new_b] = _piece
 
             if "White" in _piece.get_colour():
                 pieces = self.p1.pieces
-                pieces[_piece.get_name()] = _piece
                 enemy_king = self.p2.pieces["King"]
                 enemy_king_pos = [0,0]
                 enemy_king_pos[0] = enemy_king.get_pos_a()
@@ -301,13 +328,20 @@ class Board(object):
 
                 for piece in pieces.values():
                     self.calculate_moves(piece)
+
+                    #Pawns can't attack diagonally so no poin't calculting their moves if king is infront of them
+                    if "Pawn" in piece.get_name() and piece.get_pos_b() == enemy_king_pos[1]:
+                        continue
+
                     for possible_move in piece.possible_moves:
-                        if possible_move == enemy_king_pos and temp.path_is_blocked(piece, possible_move[0],possible_move[1]) == False:
+                        if possible_move == enemy_king_pos and self.path_is_blocked(piece, possible_move[0],possible_move[1]) == False:
+                            self.board[_new_a][_new_b] = 0
+                            _piece.change_pos(old_pos_a,old_pos_b)
+                            self.board[old_pos_a][old_pos_b] = _piece
                             return True
 
             elif "Black" in _piece.get_colour():                
                 pieces = self.p2.pieces
-                pieces[_piece.get_name()] = _piece
                 enemy_king = self.p1.pieces["King"]
                 enemy_king_pos = [0,0]
                 enemy_king_pos[0] = enemy_king.get_pos_a()
@@ -315,25 +349,39 @@ class Board(object):
 
                 for piece in pieces.values():
                     self.calculate_moves(piece)
+
+                    #Pawns can't attack diagonally so no poin't calculting their moves if king is infront of them
+                    if "Pawn" in piece.get_name() and piece.get_pos_b() == enemy_king_pos[1]:
+                        continue
+
                     for possible_move in piece.possible_moves:
-                        if possible_move == enemy_king_pos and temp.path_is_blocked(piece, possible_move[0],possible_move[1]) == False:
+                        if possible_move == enemy_king_pos and self.path_is_blocked(piece, possible_move[0],possible_move[1]) == False:
+
+                            #Reset the board to it's original state
+                            self.board[_new_a][_new_b] = 0
+                            _piece.change_pos(old_pos_a,old_pos_b)
+                            self.board[old_pos_a][old_pos_b] = _piece
                             return True
 
+            #Reset the board to it's original state
+            self.board[_new_a][_new_b] = 0
+            _piece.change_pos(old_pos_a,old_pos_b)
+            self.board[old_pos_a][old_pos_b] = _piece
             return False
 
     def check_enemy(self, _piece):
         if "White" in _piece.get_colour():
-            self.p2.pieces["King"].check == True
+            self.p2.pieces["King"].check = True
 
         elif "Black" in _piece.get_colour():             
-            self.p1.pieces["King"].check == True
+            self.p1.pieces["King"].check = True
 
     def uncheck_self(self, _piece):
         if "White" in _piece.get_colour():
-            self.p1.pieces["King"].check == False
+            self.p1.pieces["King"].check = False
 
         elif "Black" in _piece.get_colour():             
-            self.p2.pieces["King"].check == False
+            self.p2.pieces["King"].check = False
 
     def is_legal_move(self, _piece, _new_a, _new_b):
         ##############
@@ -374,12 +422,12 @@ class Board(object):
         
             #Rule: Move can't put your king in check
             if self.puts_king_in_check(_piece, _new_a, _new_b) == True:
-                print("Illegal Move: Move puts King in check\n")
+                print("Illegal Move: Move puts King in check")
                 return False
         
             #Rule: Pieces can't move through other pieces with the exeption of Knights
             elif "Knight" not in piece_name and self.path_is_blocked(_piece,_new_a,_new_b):
-                print("Illegal Move: {piece}'s Path is blocked\n".format(piece=piece_name))
+                print("Illegal Move: {piece}'s Path is blocked".format(piece=piece_name))
                 return False
         
             #Pawns have two rules
@@ -397,8 +445,7 @@ class Board(object):
                     _piece.first_turn_complete()
 
             #Check if move puts enemy king in check
-            if self.puts_enemy_king_in_check(_piece, _new_a, _new_b) == True:
-                print("Enemy King is in Check.\n")
+            if self.puts_enemy_king_in_check(_piece, _new_a, _new_b) == True:                
                 self.check_enemy(_piece)
         
             #Checks passed, move is legal. 
@@ -415,7 +462,6 @@ class Board(object):
                 return False
             #Check if move puts enemy king in check
             if self.puts_enemy_king_in_check(_piece, _new_a, _new_b) == True:
-                print("Enemy King is in Check.\n")
                 self.check_enemy(_piece)
             
             #Legal attack

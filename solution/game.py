@@ -1,5 +1,5 @@
 """
-    10/12 
+11/12 
         BUGS >@<
             ATTEMPTING TO MOVE A FALLEN PIECE
             If an attempted move is made on a piece that has fallen, an error is thrown
@@ -12,31 +12,31 @@
                 The fix will have to be implemented later on when I implement a way of interacting with the board Library
                 With a catch to throw the error that the piece isn't alive before passing it to that functions
 
-                King throwing Illegal move:  Puts self in check error when it's a legal move
-                Something to do with Bishop returning path clear in puts_king_in_check()
     
 
         Overall changes:
+            Fixed Github Issue #1: King throwing "Illegal move: Puts self in check" error when it's a legal move
+            Fixed Github Issue #3: No indication that enemy King is in check when such a move is made 
+            Changed the orders of newlines for cleaner readability in the terminal 
             
             
         Board:
-            __init__() no longer requires player references
-            Added valid_names tuple
-            Added a Move counter (Yet to implement fucntionality)
-            Added is_valid_name()
-            Changed register_move() funcitonality
-                Is now used as such register_move(player, piece, pos_a, pos_b) where 'player' and 'piece' are string references
-            Fixed some King check bugs
-            Cleaned up is_legal_move() for readability and removed redundant code
+            Added king_check_printer():
+                Just makes things a bit cleaner in the register_move() function
 
-            
-            
+            Changed puts_king_in_check() 
+            Changed puts_enemy_king_in_check()
+                Functions no longer instantiate new instances of Board, it was unnessesary
+                They now make the changes on the current board, then undo them at the end of the fucntion. 
+
+            Fixed check_enemy() 
+            Fixed uncheck_self()
+
         Pieces:
 
         Player:
 
     NEXT:
-            Fix King throwing Illegal move bug
             Pawns turn into a different piece when they make it to the top.
             Add check mate condition
 
@@ -74,9 +74,14 @@ game.register_move("Black", "King",        1,2)
 game.register_move("White", "Pawn_6",      5,5)
 game.register_move("Black", "King",        2,3)
 game.register_move("White", "Pawn_6",      4,5)
-game.register_move("Black", "Pawn_3",      4,2)
+game.register_move("Black", "Pawn_3",      4,2)#Illegal move 
 game.register_move("Black", "King",        2,4)
 game.register_move("White", "Pawn_6",      3,5)
+game.register_move("Black", "Pawn_3",      4,2)#Illegal as king is in check
+game.register_move("Black", "King",        2,5)
+
+
+
 
 
 
