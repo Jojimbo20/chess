@@ -1,47 +1,61 @@
 """
-11/12 
+12/12 
         BUGS >@<
-            ATTEMPTING TO MOVE A FALLEN PIECE
-            If an attempted move is made on a piece that has fallen, an error is thrown
-                The cause of this is to do with how pieces are taken, 
-                First they're added into player1.pieces_taken{}
-                The piece is then deleted from player2.pieces{}
-                So when 
-                board.register_move(Player_B.pieces["FALLEN_PIECE"], pos_a, pos_b)            
-                Is called, it's actually referencing a key pair that doesn't exist within the dictionary. 
-                The fix will have to be implemented later on when I implement a way of interacting with the board Library
-                With a catch to throw the error that the piece isn't alive before passing it to that functions
-
+            Github Issue #4: King being shown as in check when an enemy move takes him out of check
     
 
         Overall changes:
-            Fixed Github Issue #1: King throwing "Illegal move: Puts self in check" error when it's a legal move
-            Fixed Github Issue #3: No indication that enemy King is in check when such a move is made 
-            Changed the orders of newlines for cleaner readability in the terminal 
+            Added Pawn Promotion:
+                Pawns get promoted into a different piece when they make it to the top.
+                Anything other than Pawn or King
+
+            Fixed Github issue #2 If an attempted move is made on a piece that has fallen, a fatal error is thrown
             
             
         Board:
-            Added king_check_printer():
-                Just makes things a bit cleaner in the register_move() function
-
-            Changed puts_king_in_check() 
-            Changed puts_enemy_king_in_check()
-                Functions no longer instantiate new instances of Board, it was unnessesary
-                They now make the changes on the current board, then undo them at the end of the fucntion. 
-
-            Fixed check_enemy() 
-            Fixed uncheck_self()
+            Added is_valid_promotion()
+            Fixed puts_enemy_in_check()
 
         Pieces:
+            Added pieces_promoted = {}
+            Added add_piece()
+            Added promote_pawn()
+            Added get_piece_names()
+            Added is_legal_pos()
+            Added get_instances()
+            Added get_live_names()
 
         Player:
 
     NEXT:
-            Pawns turn into a different piece when they make it to the top.
+            
+
+
+
+            Add castling:
+                ---
+                The king and the Rook move towards eachother and swap places.
+                In order to do this, move your ing not one, but two spaces towards the rook you are castling with
+                Then place the Rook on the opposite side of the King. 
+                ---
+                Prerequisites:
+                    - The King and rook may not have moved,
+                    - There must not be any obstruction between the pieces
+                    - The King cannot move through Check 
+            
+            Add En Passant:
+                ---
+                A pawn moving forward two squares on the first turn can be captured "En passant" by an enemy pawn
+                If and only if it has moved two spaces (First turn)
+                And it lands next to the enemy Pawn. 
+                The capturing pawn takes the moving Pawn by attacking the square behind the moving pawn. 
+                ---
+
             Add check mate condition
 
     Would be nice:
         Add board.move_counter() functionality
+        Add a dictionary to track moves and events 
         Format Player.print_pieces() to have all coordinates line up        
         Represent pieces in a nice printed way. 
         Type commands into command line
@@ -67,18 +81,22 @@ game.p1.print_pieces()
 print("")
 game.update()
 
-game.register_move("White", "Pawn_2",      5,1)
-game.register_move("Black", "Pawn_3",      3,2)
-game.register_move("White", "Bishop_1",    5,0)
-game.register_move("Black", "King",        1,2)
-game.register_move("White", "Pawn_6",      5,5)
-game.register_move("Black", "King",        2,3)
-game.register_move("White", "Pawn_6",      4,5)
-game.register_move("Black", "Pawn_3",      4,2)#Illegal move 
-game.register_move("Black", "King",        2,4)
-game.register_move("White", "Pawn_6",      3,5)
-game.register_move("Black", "Pawn_3",      4,2)#Illegal as king is in check
-game.register_move("Black", "King",        2,5)
+game.register_move("White", "Pawn_3",      4,2)
+game.register_move("White", "Pawn_3",      3,2)
+game.register_move("White", "Pawn_3",      2,2)
+
+game.register_move("White", "Knight_1",    5,2)
+game.register_move("White", "Knight_1",    3,1)
+game.register_move("White", "Knight_1",    1,2)
+
+game.register_move("White", "Knight_1",    2,0)
+game.register_move("Black", "Pawn_4",      2,3)
+game.register_move("Black", "Bishop_1",    2,4)
+
+game.register_move("White", "Pawn_3",      1,2)
+game.register_move("White", "Pawn_3",      0,2)
+
+
 
 
 

@@ -9,6 +9,7 @@ class Player(object):
         self.colour = _colour
         self.pieces = {}
         self.pieces_taken = {}
+        self.pieces_promoted = {}
 
         if _colour != "White" and _colour != "Black":
             print("ERROR: Colour must be 'White' or 'Black'")
@@ -103,6 +104,60 @@ class Player(object):
         self.score = len(self.pieces_taken)
         return self.score
 
+    def add_piece(self, _piece, _pos_a, _pos_b):
+        if self.is_legal_pos(_pos_a,_pos_b) == False:
+            print("Illegal piece position: Are pos_a and pos_b within 0 and 7?")
+            return
+
+        instances = self.get_instances(_piece)
+        new_name = _piece + "_" + str(instances+1)
+
+        if "Queen" in new_name:
+            self.pieces[new_name] = chess.Queen(self.get_colour(),_pos_a, _pos_b, new_name)
+        elif "Bishop" in new_name:
+            self.pieces[new_name] = chess.Bishop(self.get_colour(),_pos_a, _pos_b, new_name)
+        elif "Knight" in new_name:
+            self.pieces[new_name] = chess.Knight(self.get_colour(),_pos_a, _pos_b, new_name)
+        elif "Rook" in new_name:
+            self.pieces[new_name] = chess.Rook(self.get_colour(),_pos_a, _pos_b, new_name)
+
+    def promote_pawn(self, pawn, new_piece):
+        if "Pawn" not in pawn.get_name():
+            print("{name} cannot be promoted. Only Pawns can be promoted.".format(name=pawn.get_name()))
+            return
+
+        self.add_piece(new_piece, pawn.get_pos_a(), pawn.get_pos_b())
+        self.pieces_promoted[pawn.get_name()] = pawn
+        self.kill_piece(pawn)
+    
+    def get_piece_names(self):
+        names = []
+        for piece_name in self.pieces:
+            names.append(piece_name)
+
+        return names
+
+
+    def is_legal_pos(self, _pos_a, _pos_b):
+        if _pos_a < 0 or _pos_b < 0 or _pos_a > 7 or _pos_b > 7:
+            return False
+        return True
+
+    def get_instances(self, _piece):
+        instance_counter = 0
+        for piece in self.pieces.values():
+            if _piece in piece.get_name():
+                instance_counter += 1
+
+        return instance_counter
+
+    def get_live_names(self):
+        names_string = ""
+        for name in self.pieces:
+            names_string += name + ", "
+
+        names_string.rstrip()
+        return names_string
 
 
 

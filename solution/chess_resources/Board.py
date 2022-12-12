@@ -26,14 +26,7 @@ class Board(object):
               [0,0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0,0]]
 
-    valid_names = ("King","Queen",
-                   "Bishop_1","Bishop_2",
-                   "Knight_1","Knight_2",
-                   "Rook_1","Rook_2",
-                   "Pawn_1","Pawn_2",
-                   "Pawn_3","Pawn_4",
-                   "Pawn_5","Pawn_6",
-                   "Pawn_7","Pawn_8")
+    valid_names = ["King","Queen","Bishop","Knight","Rook","Pawn"]
 
     move_counter = {"Total_Moves":0}
 
@@ -181,9 +174,11 @@ class Board(object):
 
 
 
-    def is_valid_name(self, _piece):    
+    def is_valid_promotion(self, _piece):   
         for name in self.valid_names:
-            if _piece in name:
+            if "Pawn" in name or "King" in name:
+                continue
+            elif name in _piece:
                 return True        
         return False
                             
@@ -205,13 +200,14 @@ class Board(object):
             print("{entry} is an invalid player. Please enter 'White' or 'Black'.".format(entry=_player))
             return
             
-        if self.is_valid_name(_piece) != True:
-            print("Name invalid, please enter a valid name from the list: {names}".format(names=self.valid_names))
+        if _piece not in player.get_piece_names():
+            print("Invalid piece, please enter a valid name from your alive pieces: \n{names}".format(names=player.get_live_names()))            
             return
 
+
+
+
         piece = player.pieces[_piece]
-
-
         print("\nAttempting {player} {piece} to {pos_a} {pos_b}".format(player=_player, piece=_piece, pos_a =_pos_a, pos_b=_pos_b))
         #Check if move is in bounds
         if _pos_a < 0 or _pos_a > 7:
@@ -223,9 +219,32 @@ class Board(object):
                 print("Illegal move: King is currently in check.\n")
             elif self.is_legal_move(piece, _pos_a, _pos_b):
                 print("Move successful! {player} {piece} now has position: {pos_a},{pos_b}".format(player=_player, piece=_piece, pos_a =_pos_a, pos_b=_pos_b))
+                piece.change_pos(_pos_a,_pos_b)
                 self.uncheck_self(piece)
                 self.update()
                 return
+
+        #If a Pawn makes it to the otherside of the board
+        elif "Pawn" in _piece and _pos_a == 0 or _pos_a == 7:
+            if self.is_legal_move(piece, _pos_a, _pos_b):
+                piece.change_pos(_pos_a,_pos_b)
+                print("Pawn has successfully made it to the other side of the board.")
+                print("Please enter the name of the piece you'd like to transform it into: Queen, Rook, Bishop, Knight")
+                input_piece = input()
+                while self.is_valid_promotion(input_piece) != True:
+                    print("\nName invalid, please enter a valid name from the list: Queen, Rook, Bishop, Knight")
+                    input_piece = input()
+                    if "Pawn" in input_piece or "King" in input_piece:
+                        print("\nInvalid piece, Pawn cannot be promoted to a King or Pawn")
+                        input_piece = ""
+
+                player.promote_pawn(piece, input_piece)
+                self.update()
+                return
+
+
+
+            
         
         #If move is in bounds, check if it's a legal move for the piece. 
         elif self.is_legal_move(piece, _pos_a, _pos_b):
@@ -315,6 +334,7 @@ class Board(object):
             #Make a copy of the board with the new move finalised
             old_pos_a = _piece.get_pos_a()
             old_pos_b = _piece.get_pos_b()
+            save_piece = self.board[_new_a][_new_b]
             self.board[old_pos_a][old_pos_b] = 0
             _piece.change_pos(_new_a, _new_b)            
             self.board[_new_a][_new_b] = _piece
@@ -338,6 +358,7 @@ class Board(object):
                             self.board[_new_a][_new_b] = 0
                             _piece.change_pos(old_pos_a,old_pos_b)
                             self.board[old_pos_a][old_pos_b] = _piece
+                            self.board[_new_a][_new_b] = save_piece
                             return True
 
             elif "Black" in _piece.get_colour():                
@@ -361,12 +382,14 @@ class Board(object):
                             self.board[_new_a][_new_b] = 0
                             _piece.change_pos(old_pos_a,old_pos_b)
                             self.board[old_pos_a][old_pos_b] = _piece
+                            self.board[_new_a][_new_b] = save_piece
                             return True
 
             #Reset the board to it's original state
             self.board[_new_a][_new_b] = 0
             _piece.change_pos(old_pos_a,old_pos_b)
             self.board[old_pos_a][old_pos_b] = _piece
+            self.board[_new_a][_new_b] = save_piece
             return False
 
     def check_enemy(self, _piece):
