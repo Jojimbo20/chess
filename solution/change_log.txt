@@ -308,6 +308,9 @@
             Fixed puts_enemy_in_check()
 
         Pieces:
+
+
+        Player:
             Added pieces_promoted = {}
             Added add_piece()
             Added promote_pawn()
@@ -315,8 +318,6 @@
             Added is_legal_pos()
             Added get_instances()
             Added get_live_names()
-
-        Player:
 
     NEXT:
             Add castling:
@@ -330,6 +331,56 @@
                     - There must not be any obstruction between the pieces
                     - The King cannot move through Check 
             
+            Add En Passant:
+                ---
+                A pawn moving forward two squares on the first turn can be captured "En passant" by an enemy pawn
+                If and only if it has moved two spaces (First turn)
+                And it lands next to the enemy Pawn. 
+                The capturing pawn takes the moving Pawn by attacking the square behind the moving pawn. 
+                ---
+
+            Add check mate condition
+
+    Would be nice:
+        Add board.move_counter() functionality
+        Add a dictionary to track moves and events 
+        Format Player.print_pieces() to have all coordinates line up        
+        Represent pieces in a nice printed way. 
+        Type commands into command line
+
+15/12 
+        BUGS >@<
+            Github Issue #4: King being shown as in check when an enemy move takes him out of check
+    
+
+        Overall changes:
+            Added Castling. 
+            
+            
+        Board:
+            Added is_legal_castle()
+            Added castle()
+            Moved the functions around
+
+        Pieces:           
+            Added first_turn to all pieces
+            Added first_turn_complete()
+            Added Castling movements to King's moveset
+
+        Player:
+            Added the full piece names to valid_names tuple
+            Added is_legal_name()
+
+
+    NEXT:   
+            Test castling:
+                    King's moveset is removed after the first turn and he can't move left and right two.
+                    All instances of castling    
+
+            Investigate:
+            Github Issue 4: King being shown as in check when an enemy move takes him out of check
+            Github Issue 5: Pawn reaching otherside dialogue being triggered when it shouldn't
+
             Add En Passant:
                 ---
                 A pawn moving forward two squares on the first turn can be captured "En passant" by an enemy pawn

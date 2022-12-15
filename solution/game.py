@@ -1,48 +1,37 @@
 """
-12/12 
+15/12 
         BUGS >@<
             Github Issue #4: King being shown as in check when an enemy move takes him out of check
     
 
         Overall changes:
-            Added Pawn Promotion:
-                Pawns get promoted into a different piece when they make it to the top.
-                Anything other than Pawn or King
-
-            Fixed Github issue #2 If an attempted move is made on a piece that has fallen, a fatal error is thrown
+            Added Castling. 
             
             
         Board:
-            Added is_valid_promotion()
-            Fixed puts_enemy_in_check()
+            Added is_legal_castle()
+            Added castle()
+            Moved the functions around
 
-        Pieces:
-            Added pieces_promoted = {}
-            Added add_piece()
-            Added promote_pawn()
-            Added get_piece_names()
-            Added is_legal_pos()
-            Added get_instances()
-            Added get_live_names()
+        Pieces:           
+            Added first_turn to all pieces
+            Added first_turn_complete()
+            Added Castling movements to King's moveset
 
         Player:
-
-    NEXT:
-            
-
+            Added the full piece names to valid_names tuple
+            Added is_legal_name()
 
 
-            Add castling:
-                ---
-                The king and the Rook move towards eachother and swap places.
-                In order to do this, move your ing not one, but two spaces towards the rook you are castling with
-                Then place the Rook on the opposite side of the King. 
-                ---
-                Prerequisites:
-                    - The King and rook may not have moved,
-                    - There must not be any obstruction between the pieces
-                    - The King cannot move through Check 
-            
+    NEXT:   
+            Test castling:
+                    King's moveset is removed after the first turn and he can't move left and right two.
+                    All instances of castling    
+
+            Investigate:
+            Github Issue 4: King being shown as in check when an enemy move takes him out of check
+            Github Issue 5: Pawn reaching otherside dialogue being triggered when it shouldn't
+
             Add En Passant:
                 ---
                 A pawn moving forward two squares on the first turn can be captured "En passant" by an enemy pawn
@@ -81,24 +70,11 @@ game.p1.print_pieces()
 print("")
 game.update()
 
-game.register_move("White", "Pawn_3",      4,2)
-game.register_move("White", "Pawn_3",      3,2)
-game.register_move("White", "Pawn_3",      2,2)
-
-game.register_move("White", "Knight_1",    5,2)
-game.register_move("White", "Knight_1",    3,1)
-game.register_move("White", "Knight_1",    1,2)
-
-game.register_move("White", "Knight_1",    2,0)
-game.register_move("Black", "Pawn_4",      2,3)
-game.register_move("Black", "Bishop_1",    2,4)
-
-game.register_move("White", "Pawn_3",      1,2)
-game.register_move("White", "Pawn_3",      0,2)
-
-
-
-
+game.register_move("White", "Pawn_4",      5,3)
+game.register_move("White", "Bishop_1",    5,4)
+game.register_move("White", "Queen",       6,3)
+game.register_move("White", "Knight_1",    5,0)
+game.register_move("White", "King",        7,2)
 
 
 
@@ -108,15 +84,3 @@ print("")
 game.p1.print_pieces()
 print("")
 game.p2.print_pieces()
-
-
-"""
-Piece testing
-Knight.calculate_moves()
-Knight.print_moves()
-Knight.change_pos(1,3)
-Knight.calculate_moves()
-Knight.print_moves()
-"""
-
-

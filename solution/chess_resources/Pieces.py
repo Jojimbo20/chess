@@ -3,12 +3,14 @@ class Piece(object):
     name = ""
     is_alive = True
     possible_moves = []
+    first_turn = True
 
     def __init__(self, _colour, _pos_a, _pos_b, _name):
         self.colour = _colour
         self.name = _name
         self.pos_a = _pos_a
         self.pos_b = _pos_b
+        
 
     def print_moves(self):
         for i in range(len(self.possible_moves)):
@@ -54,6 +56,9 @@ class Piece(object):
                 if pos[0] == _pos_a and pos[1] == _pos_b:
                     return True
         return False
+    
+    def first_turn_complete(self):
+        self.first_turn = False
 
     def kill(self):
         self.is_alive = False
@@ -66,7 +71,6 @@ class Piece(object):
 
 
 class Pawn_W(Piece):
-    first_turn = True
     def __init__(self, _colour, _pos_a, _pos_b, _name):        
         self.colour = _colour
         self.name = _name
@@ -91,7 +95,6 @@ class Pawn_W(Piece):
 
 
 class Pawn_B(Piece):
-    first_turn = True
     def __init__(self, _colour, _pos_a, _pos_b, _name):        
         self.colour = _colour
         self.name = _name
@@ -384,16 +387,27 @@ class King(Piece):
                       [0,0],
                       [0,0],
                       [0,0],
+                      [0,0],
+                      [0,0],
                       [0,0]]
 
-    move_matrix = [[-1, 1],#Top Right
+    move_matrix = [[ 0,-2],#Left Two (CASTLE ONLY)
+                   [ 0, 2],#Right Two (CASTLE ONLY)
+                   [-1, 1],#Top Right
                    [-1,-1],#Top Left
                    [ 1,-1],#Bottom Left
                    [ 1, 1],#Bottom Right
                    [-1, 0],#Up
                    [ 1, 0],#Down
-                   [ 0,-1],#Right 
-                   [ 0, 1]]#Left
+                   [ 0,-1],#Left
+                   [ 0, 1]]#Right
+
+    def first_turn_complete(self):
+        del self.possible_moves[0]
+        del self.possible_moves[1]
+        del self.move_matrix[0]
+        del self.move_matrix[1]
+        self.first_turn = False
 
     
 

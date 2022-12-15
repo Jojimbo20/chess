@@ -4,6 +4,7 @@ print("Player.py accessed")
 class Player(object):
     #The number of Pieces 
     score = 0
+    valid_names = ("King","Queen","Bishop_1","Bishop_2","Knight_1","Knight_2","Rook_1","Rook_2","Pawn_1","Pawn_2","Pawn_3","Pawn_4","Pawn_5","Pawn_6","Pawn_7","Pawn_8")
 
     def __init__(self, _colour):  
         self.colour = _colour
@@ -14,8 +15,8 @@ class Player(object):
         if _colour != "White" and _colour != "Black":
             print("ERROR: Colour must be 'White' or 'Black'")
         elif _colour == "White":
-            king    = chess.King(_colour,   7, 3,"King")
-            queen   = chess.Queen(_colour,  7, 4,"Queen")             
+            king    = chess.King(_colour,   7, 4,"King")
+            queen   = chess.Queen(_colour,  7, 3,"Queen")             
             bishop_1= chess.Bishop(_colour, 7, 2,"Bishop_1")
             bishop_2= chess.Bishop(_colour, 7, 5,"Bishop_2")
             knight_1= chess.Knight(_colour, 7, 1,"Knight_1")
@@ -49,8 +50,8 @@ class Player(object):
             self.pieces['Pawn_7'  ]   =  pawn_7  
             self.pieces['Pawn_8'  ]   =  pawn_8  
         else:
-            king    = chess.King(_colour,   0, 3,"King")
-            queen   = chess.Queen(_colour,  0, 4,"Queen")             
+            king    = chess.King(_colour,   0, 4,"King")
+            queen   = chess.Queen(_colour,  0, 3,"Queen")             
             bishop_1= chess.Bishop(_colour, 0, 2,"Bishop_1")
             bishop_2= chess.Bishop(_colour, 0, 5,"Bishop_2")
             knight_1= chess.Knight(_colour, 0, 1,"Knight_1")
@@ -125,7 +126,7 @@ class Player(object):
         if "Pawn" not in pawn.get_name():
             print("{name} cannot be promoted. Only Pawns can be promoted.".format(name=pawn.get_name()))
             return
-
+        
         self.add_piece(new_piece, pawn.get_pos_a(), pawn.get_pos_b())
         self.pieces_promoted[pawn.get_name()] = pawn
         self.kill_piece(pawn)
@@ -143,7 +144,17 @@ class Player(object):
             return False
         return True
 
+    def is_legal_name(self, _name):
+        for piece_name in self.valid_names:
+            if _name == piece_name:
+                return True
+        return False
+
     def get_instances(self, _piece):
+        if self.is_legal_name(_piece) != True:
+            print("{name} is not a valid piece name. Please enter a valid piece name: \n{valid_names}".format(name=_piece,valid_names=self.valid_names))
+            return 
+
         instance_counter = 0
         for piece in self.pieces.values():
             if _piece in piece.get_name():
