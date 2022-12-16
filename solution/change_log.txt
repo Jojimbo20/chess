@@ -397,3 +397,44 @@
         Format Player.print_pieces() to have all coordinates line up        
         Represent pieces in a nice printed way. 
         Type commands into command line
+"""
+16/12 
+        BUGS >@<
+           
+    
+
+        Overall changes:
+            Fixed Github Issue 5: Pawn reaching otherside dialogue being triggered when it shouldn't
+            Fixed Github Issue 4: King being shown as in check when an enemy move takes him out of check
+            Tested castling, all working as it should         
+            
+            
+        Board:
+            Added uncheck_enemy()
+
+
+        Pieces:           
+            Changed some of King's attributes so that each instance has their own Moveset. 
+
+        Player:
+
+
+
+    NEXT:
+            Add En Passant:
+                ---
+                A pawn moving forward two squares on the first turn can be captured "En passant" by an enemy pawn
+                If and only if it has moved two spaces (First turn)
+                And it lands next to the enemy Pawn. 
+                The capturing pawn takes the moving Pawn by attacking the square behind the moving pawn. 
+                ---
+
+            Add check mate condition
+
+    Would be nice:
+        Add board.move_counter() functionality
+        Add a dictionary to track moves and events 
+        Format Player.print_pieces() to have all coordinates line up        
+        Represent pieces in a nice printed way. 
+        Type commands into command line
+"""

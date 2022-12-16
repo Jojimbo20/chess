@@ -91,7 +91,7 @@ class Board(object):
                 return
 
         #If a Pawn makes it to the otherside of the board
-        elif "Pawn" in _piece and _pos_a == 0 or _pos_a == 7:
+        elif "Pawn" in _piece and (_pos_a == 0 or _pos_a == 7):
             if self.is_legal_move(piece, _pos_a, _pos_b):
                 piece.change_pos(_pos_a,_pos_b)
                 print("Pawn has successfully made it to the other side of the board.")
@@ -140,6 +140,8 @@ class Board(object):
         if _piece.is_in_moveset(_new_a, _new_b) != True:            
             print("Illegal Move: {piece} has no possible move ".format(piece=piece_name))
             return False
+
+        self.update()
         
         ##################
         # RULE CHECKING: #
@@ -194,6 +196,8 @@ class Board(object):
             #Check if move puts enemy king in check
             if self.puts_enemy_king_in_check(_piece, _new_a, _new_b) == True:                
                 self.check_enemy(_piece)
+            else:
+                self.uncheck_enemy(_piece)
             
             if _piece.first_turn == True:                    
                 _piece.first_turn_complete()
@@ -428,6 +432,13 @@ class Board(object):
 
         elif "Black" in _piece.get_colour():             
             self.p1.pieces["King"].check = True
+
+    def uncheck_enemy(self, _piece):
+        if "White" in _piece.get_colour():
+            self.p2.pieces["King"].check = False
+
+        elif "Black" in _piece.get_colour():             
+            self.p1.pieces["King"].check = False
 
     def uncheck_self(self, _piece):
         if "White" in _piece.get_colour():

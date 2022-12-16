@@ -78,14 +78,14 @@ class Pawn_W(Piece):
         self.pos_b = _pos_b
 
         self.possible_moves = [[0,0],
-                          [0,0],
-                          [0,0],
-                          [0,0]]
+                               [0,0],
+                               [0,0],
+                               [0,0]]
 
         self.move_matrix = [[-2, 0],#March two forward where no enemy blocks path and first_turn = True
-                       [-1, 0],#March one forward where no enemy blocks path
-                       [-1,-1],#Take Top Left where enemy is present
-                       [-1, 1]]#Take Top Right where enemy is present    
+                            [-1, 0],#March one forward where no enemy blocks path
+                            [-1,-1],#Take Top Left where enemy is present
+                            [-1, 1]]#Take Top Right where enemy is present    
 
     def first_turn_complete(self):
         del self.possible_moves[0]
@@ -376,37 +376,47 @@ class Rook(Piece):
                    [ 0, 7]]
 
 class King(Piece):
-    check = False
-    #King can move in any direction one space
-    #King can't move into a position where he puts himself in danger
-    #King can't move into a position that's occupied by friendly piece
-    possible_moves = [[0,0],
-                      [0,0],
-                      [0,0],
-                      [0,0],
-                      [0,0],
-                      [0,0],
-                      [0,0],
-                      [0,0],
-                      [0,0],
-                      [0,0]]
+    """
+       King can move in any direction one space
+       King can't move into a position where he puts himself in danger
+       King can't move into a position that's occupied by friendly piece
+       King has a special move: Castling
+    """
 
-    move_matrix = [[ 0,-2],#Left Two (CASTLE ONLY)
-                   [ 0, 2],#Right Two (CASTLE ONLY)
-                   [-1, 1],#Top Right
-                   [-1,-1],#Top Left
-                   [ 1,-1],#Bottom Left
-                   [ 1, 1],#Bottom Right
-                   [-1, 0],#Up
-                   [ 1, 0],#Down
-                   [ 0,-1],#Left
-                   [ 0, 1]]#Right
+    def __init__(self, _colour, _pos_a, _pos_b, _name):
+        self.colour = _colour
+        self.name = _name
+        self.pos_a = _pos_a
+        self.pos_b = _pos_b
+        self.check = False
+        self.possible_moves = [[0,0],
+                               [0,0],
+                               [0,0],
+                               [0,0],
+                               [0,0],
+                               [0,0],
+                               [0,0],
+                               [0,0],
+                               [0,0],
+                               [0,0]]
+    
+        self.move_matrix = [[ 0,-2],#Left Two (CASTLE ONLY)
+                            [ 0, 2],#Right Two (CASTLE ONLY)
+                            [-1, 1],#Top Right
+                            [-1,-1],#Top Left
+                            [ 1,-1],#Bottom Left
+                            [ 1, 1],#Bottom Right
+                            [-1, 0],#Up
+                            [ 1, 0],#Down
+                            [ 0,-1],#Left
+                            [ 0, 1]]#Right
+
 
     def first_turn_complete(self):
         del self.possible_moves[0]
-        del self.possible_moves[1]
+        del self.possible_moves[0]
         del self.move_matrix[0]
-        del self.move_matrix[1]
+        del self.move_matrix[0]
         self.first_turn = False
 
     

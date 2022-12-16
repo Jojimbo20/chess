@@ -1,37 +1,27 @@
 """
-15/12 
+16/12 
         BUGS >@<
-            Github Issue #4: King being shown as in check when an enemy move takes him out of check
+           
     
 
         Overall changes:
-            Added Castling. 
+            Fixed Github Issue 5: Pawn reaching otherside dialogue being triggered when it shouldn't
+            Fixed Github Issue 4: King being shown as in check when an enemy move takes him out of check
+            Tested castling, all working as it should         
             
             
         Board:
-            Added is_legal_castle()
-            Added castle()
-            Moved the functions around
+            Added uncheck_enemy()
+
 
         Pieces:           
-            Added first_turn to all pieces
-            Added first_turn_complete()
-            Added Castling movements to King's moveset
+            Changed some of King's attributes so that each instance has their own Moveset. 
 
         Player:
-            Added the full piece names to valid_names tuple
-            Added is_legal_name()
 
 
-    NEXT:   
-            Test castling:
-                    King's moveset is removed after the first turn and he can't move left and right two.
-                    All instances of castling    
 
-            Investigate:
-            Github Issue 4: King being shown as in check when an enemy move takes him out of check
-            Github Issue 5: Pawn reaching otherside dialogue being triggered when it shouldn't
-
+    NEXT:
             Add En Passant:
                 ---
                 A pawn moving forward two squares on the first turn can be captured "En passant" by an enemy pawn
@@ -50,6 +40,65 @@
         Type commands into command line
 """
 import chess_resources as chess
+
+def move_pawns_forward(_player, _spaces, _game):
+
+    if "White" in _player:
+        for piece in _game.p1.pieces.values():
+            if "Pawn" not in piece.get_name():
+                continue
+            _game.register_move("White", piece.get_name(),      (piece.get_pos_a() - _spaces), piece.get_pos_b())
+    else:
+        for piece in _game.p2.pieces.values():
+            if "Pawn" not in piece.get_name():
+                continue
+            _game.register_move("Black", piece.get_name(),      (piece.get_pos_a() + _spaces), piece.get_pos_b())
+
+def kill_pawns(_game):
+    pawns = []
+    for pawn in _game.p1.pieces.values():
+        if "Pawn" not in pawn.get_name():
+            continue
+        pawns.append(pawn)
+    for pawn in pawns:
+        _game.p1.kill_piece(pawn)
+
+    pawns = []
+
+    for pawn in _game.p2.pieces.values():
+        if "Pawn" not in pawn.get_name():
+            continue
+        pawns.append(pawn)
+
+    for pawn in pawns:
+        _game.p2.kill_piece(pawn)
+    
+
+
+def check_castling(_game):
+    move_pawns_forward("White", 2, _game)
+    move_pawns_forward("Black", 2, _game)
+    _game.register_move("White", "Queen", 6,3)
+    _game.register_move("Black", "Queen", 1,3)
+    _game.register_move("White", "Bishop_1", 6,1)
+    _game.register_move("White", "Bishop_2", 6,6)
+    _game.register_move("Black", "Bishop_1", 1,1)
+    _game.register_move("Black", "Bishop_2", 1,6)
+    _game.register_move("Black", "Knight_1", 2,0)
+    _game.register_move("Black", "Knight_2", 2,7)
+    _game.register_move("White", "Knight_1", 5,0)
+    _game.register_move("White", "Knight_2", 5,7)
+    """
+        UNCOMMENT AS NEEDED
+    """
+
+    #Queen side castling
+    #_game.register_move("White", "King", 7,2)
+    #_game.register_move("Black", "King", 0,2)
+    
+    #King side castling
+    #_game.register_move("White", "King", 7,6)
+    #_game.register_move("Black", "King", 0,6)
 
 game = chess.Board()
 
@@ -70,12 +119,34 @@ game.p1.print_pieces()
 print("")
 game.update()
 
-game.register_move("White", "Pawn_4",      5,3)
-game.register_move("White", "Bishop_1",    5,4)
-game.register_move("White", "Queen",       6,3)
-game.register_move("White", "Knight_1",    5,0)
-game.register_move("White", "King",        7,2)
 
+
+kill_pawns(game)
+game.register_move("White", "Queen", 6,3)
+game.register_move("Black", "Queen", 1,3)
+game.register_move("White", "Bishop_1", 6,1)
+game.register_move("White", "Bishop_2", 6,6)
+game.register_move("Black", "Bishop_1", 1,1)
+game.register_move("Black", "Bishop_2", 1,6)
+game.register_move("Black", "Knight_1", 2,0)
+game.register_move("Black", "Knight_2", 2,7)
+game.register_move("White", "Knight_1", 5,0)
+game.register_move("White", "Knight_2", 5,7)
+#King can't be in check
+#King can't move through check
+#King can't land in check
+
+game.register_move("White", "Knight_1", 3,1)
+game.register_move("White", "Knight_1", 2,3)
+game.register_move("White", "Knight_1", 4,4)
+
+
+
+
+
+
+#game.register_move("White", "King", 7,2)
+#game.register_move("Black", "King", 0,6)
 
 
 
@@ -84,3 +155,5 @@ print("")
 game.p1.print_pieces()
 print("")
 game.p2.print_pieces()
+
+
