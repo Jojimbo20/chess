@@ -438,3 +438,36 @@
         Represent pieces in a nice printed way. 
         Type commands into command line
 """
+19/12 
+        BUGS >@<
+           
+    
+
+        Overall changes:
+            Added En Passant. Needs testing       
+            
+            
+        Board:
+            Added calculate_passant()
+            Added close_passant()
+
+
+        Pieces:           
+            (PawnW & PawnB) 
+                Added passant_victim_pos
+                Added can_passant()
+                Added can_not_passant()
+
+        Player:
+
+
+
+    NEXT:
+            Add check mate condition
+
+    Would be nice:
+        Add board.move_counter() functionality
+        Add a dictionary to track moves and events 
+        Format Player.print_pieces() to have all coordinates line up        
+        Represent pieces in a nice printed way. 
+        Type commands into command line

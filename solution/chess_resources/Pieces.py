@@ -76,6 +76,9 @@ class Pawn_W(Piece):
         self.name = _name
         self.pos_a = _pos_a
         self.pos_b = _pos_b
+        self.passant = False
+        self.passant_victim_pos_a = -1
+        self.passant_victim_pos_b = -1
 
         self.possible_moves = [[0,0],
                                [0,0],
@@ -91,6 +94,17 @@ class Pawn_W(Piece):
         del self.possible_moves[0]
         del self.move_matrix[0]        
         self.first_turn = False
+        
+    def can_passant(self, _new_a, _new_b):
+        self.passant = True
+        self.passant_victim_pos_a = _new_a
+        self.passant_victim_pos_b = _new_b
+
+
+    def can_not_passant(self):
+        self.passant = False
+        self.passant_victim_pos_a = -1
+        self.passant_victim_pos_b = -1
 
 
 
@@ -100,6 +114,9 @@ class Pawn_B(Piece):
         self.name = _name
         self.pos_a = _pos_a
         self.pos_b = _pos_b
+        self.passant = False
+        self.passant_victim_pos_a = -1
+        self.passant_victim_pos_b = -1
 
         self.possible_moves = [[0,0],
                                [0,0],
@@ -115,6 +132,17 @@ class Pawn_B(Piece):
         del self.possible_moves[0]
         del self.move_matrix[0]        
         self.first_turn = False
+
+    def can_passant(self, _new_a, _new_b):
+        self.passant = True
+        self.passant_victim_pos_a = _new_a
+        self.passant_victim_pos_b = _new_b
+
+
+    def can_not_passant(self):
+        self.passant = False
+        self.passant_victim_pos_a = -1
+        self.passant_victim_pos_b = -1
 
 
 class Knight(Piece):

@@ -55,7 +55,12 @@ class Board(object):
         for piece in self.p2.pieces.values():
             self.board[piece.get_pos_a()][piece.get_pos_b()] = piece
 
-
+    def close_passant(self, _player):
+        for piece in _player.pieces.values():
+            if "Pawn" not in piece.get_name():
+                continue
+            if piece.passant == True:
+                piece.can_not_passant()
 
     def register_move(self, _player, _piece, _pos_a, _pos_b):
         if "White" in _player:
@@ -75,6 +80,8 @@ class Board(object):
 
         piece = player.pieces[_piece]
         print("\nAttempting {player} {piece} to {pos_a} {pos_b}".format(player=_player, piece=_piece, pos_a =_pos_a, pos_b=_pos_b))
+
+
         #Check if move is in bounds
         if _pos_a < 0 or _pos_a > 7:
             print("Illegal move: {piece} to {pos_a},{pos_b} is out of bounds.".format(piece=piece.get_name(),  pos_a=_pos_a,  pos_b=_pos_b))
@@ -116,7 +123,11 @@ class Board(object):
         elif self.is_legal_move(piece, _pos_a, _pos_b):
             piece.change_pos(_pos_a,_pos_b)
             print("Move successful! {player} {piece} now has position: {pos_a},{pos_b}".format(player=_player, piece=_piece, pos_a =_pos_a, pos_b=_pos_b))
-            self.king_check_printer()
+            
+            if player.pieces["King"].check == True:
+                print("{player}'s King is in Check.".format(player.get_colour()))
+            
+            self.close_passant(player)
             self.update()
             return
 
@@ -171,12 +182,22 @@ class Board(object):
                 return False
         
             #Pawns have two rules
-            elif "Pawn" in piece_name:        
+            elif "Pawn" in piece_name:  
                 
                 #Rule 1: Pawns can only move diagonally when attacking
-                if _new_b != _piece.get_pos_b():
+                if _piece.passant == False and _new_b != _piece.get_pos_b():
                     print("Illegal Move: Pawn cannot attack empty square")
                     return False
+                #If a pawn moves two on the first attempt then check to see if any pieces can execute the En Passant rule
+                elif _new_a == (_piece.get_pos_a() + 2) or _new_a == (_piece.get_pos_a() - 2):
+                    self.calculate_passant(_piece, _new_a, _new_b)
+
+                elif _piece.passant == True:
+                    if ((_new_a == _piece.passant_victim_pos_a - 1) or (_new_a == _piece.passant_victim_pos_a + 1)) and _new_b == _piece.passant_victim_pos_b:
+                        self.attack_square(_piece.passant_victim_pos_a, _piece.passant_victim_pos_b)
+                        print("En Passant Triggered.")
+                    _piece.can_not_passant()
+
 
             #King can castle on the first turn
             elif "King" in piece_name and _piece.first_turn == True:
@@ -217,10 +238,13 @@ class Board(object):
             #Check if move puts enemy king in check
             if self.puts_enemy_king_in_check(_piece, _new_a, _new_b) == True:
                 self.check_enemy(_piece)
+            else:
+                self.uncheck_enemy(_piece)
             
             #Legal attack
             self.attack_square(_new_a, _new_b)
             return True
+
 
     def castle(self, _piece, _new_b):
         if _piece.get_colour() == "White":
@@ -241,6 +265,36 @@ class Board(object):
                 self.p2.pieces["Rook_1"].change_pos(0,3)
                 self.p2.pieces["Rook_1"].first_turn_complete()
                 self.p2.pieces["King"].change_pos(0,6)
+
+    def calculate_passant(self, _piece, _new_a, _new_b):
+        if _new_b == 7:
+            adjacent_square = self.board[_new_a][_new_b - 1]
+            if adjacent_square == 0:
+                return
+            elif "Pawn" in adjacent_square.get_name():
+                adjacent_square.passant = True
+                return
+
+        elif _new_b == 0:
+            adjacent_square = self.board[_new_a][_new_b + 1]
+            if adjacent_square == 0:
+                return
+            elif "Pawn" in adjacent_square.get_name():
+                adjacent_square.passant = True
+                return
+
+        left_square = self.board[_new_a][_new_b - 1]
+        right_square = self.board[_new_a][_new_b + 1]
+        if left_square == 0 and right_square == 0:
+            return
+
+        if left_square != 0 and "Pawn" in left_square.get_name():
+            left_square.can_passant(_new_a, _new_b)      
+
+        if right_square != 0 and "Pawn" in right_square.get_name():
+            right_square.can_passant(_new_a, _new_b)
+            
+
 
 
     def is_legal_castle(self, _piece, _new_b):
@@ -534,10 +588,6 @@ class Board(object):
             return "ENEMY"
 
 
-
-
-
-
         
     def attack_square(self, _pos_a, _pos_b):
         _piece = self.board[_pos_a][_pos_b]
@@ -564,15 +614,6 @@ class Board(object):
             elif name in _piece:
                 return True        
         return False
-                            
-
-
-    def king_check_printer(self):
-        if self.p1.pieces["King"].check == True:
-            print("White's King is in Check.")
-        
-        elif self.p2.pieces["King"].check == True:            
-            print("Black's King is in Check.")
 
 
 

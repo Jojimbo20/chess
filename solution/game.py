@@ -1,35 +1,29 @@
 """
-16/12 
+19/12 
         BUGS >@<
            
     
 
         Overall changes:
-            Fixed Github Issue 5: Pawn reaching otherside dialogue being triggered when it shouldn't
-            Fixed Github Issue 4: King being shown as in check when an enemy move takes him out of check
-            Tested castling, all working as it should         
+            Added En Passant. Needs testing       
             
             
         Board:
-            Added uncheck_enemy()
+            Added calculate_passant()
+            Added close_passant()
 
 
         Pieces:           
-            Changed some of King's attributes so that each instance has their own Moveset. 
+            (PawnW & PawnB) 
+                Added passant_victim_pos
+                Added can_passant()
+                Added can_not_passant()
 
         Player:
 
 
 
     NEXT:
-            Add En Passant:
-                ---
-                A pawn moving forward two squares on the first turn can be captured "En passant" by an enemy pawn
-                If and only if it has moved two spaces (First turn)
-                And it lands next to the enemy Pawn. 
-                The capturing pawn takes the moving Pawn by attacking the square behind the moving pawn. 
-                ---
-
             Add check mate condition
 
     Would be nice:
@@ -120,25 +114,12 @@ print("")
 game.update()
 
 
+game.register_move("White", "Pawn_5", 4,4)
+game.register_move("White", "Pawn_5", 3,4)
+game.register_move("Black", "Pawn_4", 3,3)
+game.register_move("White", "Pawn_5", 2,3)
 
-kill_pawns(game)
-game.register_move("White", "Queen", 6,3)
-game.register_move("Black", "Queen", 1,3)
-game.register_move("White", "Bishop_1", 6,1)
-game.register_move("White", "Bishop_2", 6,6)
-game.register_move("Black", "Bishop_1", 1,1)
-game.register_move("Black", "Bishop_2", 1,6)
-game.register_move("Black", "Knight_1", 2,0)
-game.register_move("Black", "Knight_2", 2,7)
-game.register_move("White", "Knight_1", 5,0)
-game.register_move("White", "Knight_2", 5,7)
-#King can't be in check
-#King can't move through check
-#King can't land in check
 
-game.register_move("White", "Knight_1", 3,1)
-game.register_move("White", "Knight_1", 2,3)
-game.register_move("White", "Knight_1", 4,4)
 
 
 
